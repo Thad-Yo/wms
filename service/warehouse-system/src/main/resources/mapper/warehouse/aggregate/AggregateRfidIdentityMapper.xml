@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyai.warehouse.mapper.AggregateRfidIdentityMapper">
+    <resultMap type="AggregateRfidIdentity" id="AggregateRfidIdentityResult">
+        <result property="identityId" column="identity_id"/>
+        <result property="rfidCode" column="rfid_code"/>
+        <result property="tidCode" column="tid_code"/>
+        <result property="materialId" column="material_id"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="identityLevel" column="identity_level"/>
+        <result property="currentState" column="current_state"/>
+        <result property="currentWarehouseId" column="current_warehouse_id"/>
+        <result property="currentWarehouseName" column="current_warehouse_name"/>
+        <result property="ownerUserId" column="owner_user_id"/>
+        <result property="ownerUserName" column="owner_user_name"/>
+        <result property="bindGoodsId" column="bind_goods_id"/>
+        <result property="bindGoodsCode" column="bind_goods_code"/>
+        <result property="bindGoodsName" column="bind_goods_name"/>
+        <result property="bindGoodsTime" column="bind_goods_time"/>
+        <result property="currentLocation" column="current_location"/>
+        <result property="bindTime" column="bind_time"/>
+        <result property="lastEventTime" column="last_event_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="selectAggregateRfidIdentityList" parameterType="AggregateRfidIdentity" resultMap="AggregateRfidIdentityResult">
+        select identity_id, rfid_code, tid_code, material_id, material_code, material_name, batch_no,
+               identity_level, current_state, current_warehouse_id, current_warehouse_name,
+               owner_user_id, owner_user_name, bind_goods_id, bind_goods_code, bind_goods_name,
+               bind_goods_time, current_location, bind_time, last_event_time, del_flag,
+               create_by, create_time, update_by, update_time, remark
+        from aggregate_rfid_identity
+        <where>
+            and del_flag = '0'
+            <if test="rfidCode != null and rfidCode != ''">and rfid_code like concat('%', #{rfidCode}, '%')</if>
+            <if test="materialId != null">and material_id = #{materialId}</if>
+            <if test="materialName != null and materialName != ''">and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="batchNo != null and batchNo != ''">and batch_no = #{batchNo}</if>
+            <if test="currentState != null and currentState != ''">and current_state = #{currentState}</if>
+            <if test="useStatus != null and useStatus == &quot;USED&quot;">and bind_goods_id is not null</if>
+            <if test="useStatus != null and useStatus == &quot;UNUSED&quot;">and bind_goods_id is null</if>
+            <if test="ownerUserId != null">and owner_user_id = #{ownerUserId}</if>
+        </where>
+        order by identity_id desc
+    </select>
+</mapper>

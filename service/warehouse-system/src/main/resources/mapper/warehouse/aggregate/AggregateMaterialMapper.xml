@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyai.warehouse.mapper.AggregateMaterialMapper">
+    <resultMap type="AggregateMaterial" id="AggregateMaterialResult">
+        <result property="materialId" column="material_id"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="materialType" column="material_type"/>
+        <result property="specification" column="specification"/>
+        <result property="originPlace" column="origin_place"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="supplierId" column="supplier_id"/>
+        <result property="supplierName" column="supplier_name"/>
+        <result property="unit" column="unit"/>
+        <result property="qualityGrade" column="quality_grade"/>
+        <result property="ownerUserId" column="owner_user_id"/>
+        <result property="ownerUserName" column="owner_user_name"/>
+        <result property="rfidCount" column="rfid_count"/>
+        <result property="usedRfidCount" column="used_rfid_count"/>
+        <result property="unusedRfidCount" column="unused_rfid_count"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="selectAggregateMaterialList" parameterType="AggregateMaterial" resultMap="AggregateMaterialResult">
+        select m.material_id,
+               m.material_code,
+               m.material_name,
+               m.material_type,
+               m.specification,
+               m.origin_place,
+               m.batch_no,
+               m.supplier_id,
+               m.supplier_name,
+               m.unit,
+               m.quality_grade,
+               m.owner_user_id,
+               m.owner_user_name,
+               count(r.identity_id) as rfid_count,
+               sum(case when r.bind_goods_id is not null then 1 else 0 end) as used_rfid_count,
+               sum(case when r.identity_id is not null and r.bind_goods_id is null then 1 else 0 end) as unused_rfid_count,
+               m.del_flag,
+               m.create_by,
+               m.create_time,
+               m.update_by,
+               m.update_time,
+               m.remark
+        from aggregate_material m
+        left join aggregate_rfid_identity r on r.material_id = m.material_id and r.del_flag = '0'
+        <where>
+            and m.del_flag = '0'
+            <if test="materialCode != null and materialCode != ''">and m.material_code like concat('%', #{materialCode}, '%')</if>
+            <if test="materialName != null and materialName != ''">and m.material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialType != null and materialType != ''">and m.material_type = #{materialType}</if>
+            <if test="batchNo != null and batchNo != ''">and m.batch_no = #{batchNo}</if>
+            <if test="ownerUserId != null">and m.owner_user_id = #{ownerUserId}</if>
+        </where>
+        group by m.material_id, m.material_code, m.material_name, m.material_type, m.specification,
+                 m.origin_place, m.batch_no, m.supplier_id, m.supplier_name, m.unit, m.quality_grade,
+                 m.owner_user_id, m.owner_user_name, m.del_flag, m.create_by, m.create_time,
+                 m.update_by, m.update_time, m.remark
+        order by m.material_id desc
+    </select>
+</mapper>
