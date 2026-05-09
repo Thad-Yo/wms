@@ -9,9 +9,10 @@ import com.xiaoyai.common.annotation.Excel;
 import com.xiaoyai.common.core.domain.BaseEntity;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
- * 数字骨料RFID身份 aggregate_rfid_identity
+ * 骨料RFID身份 aggregate_rfid_identity
  */
 @TableName("aggregate_rfid_identity")
 public class AggregateRfidIdentity extends BaseEntity {
@@ -54,10 +55,10 @@ public class AggregateRfidIdentity extends BaseEntity {
 
     private Long bindGoodsId;
 
-    @Excel(name = "绑定货品编号")
+    @Excel(name = "绑定骨料编号")
     private String bindGoodsCode;
 
-    @Excel(name = "绑定货品名称")
+    @Excel(name = "绑定骨料名称")
     private String bindGoodsName;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -65,6 +66,9 @@ public class AggregateRfidIdentity extends BaseEntity {
 
     @TableField(exist = false)
     private String useStatus;
+
+    @TableField(exist = false)
+    private Map<String, Object> subjectFieldMap;
 
     @Excel(name = "当前位置")
     private String currentLocation;
@@ -187,12 +191,28 @@ public class AggregateRfidIdentity extends BaseEntity {
         this.bindGoodsId = bindGoodsId;
     }
 
+    public Long getBindObjectId() {
+        return bindGoodsId;
+    }
+
+    public void setBindObjectId(Long bindObjectId) {
+        this.bindGoodsId = bindObjectId;
+    }
+
     public String getBindGoodsCode() {
         return bindGoodsCode;
     }
 
     public void setBindGoodsCode(String bindGoodsCode) {
         this.bindGoodsCode = bindGoodsCode;
+    }
+
+    public String getBindObjectCode() {
+        return bindGoodsCode;
+    }
+
+    public void setBindObjectCode(String bindObjectCode) {
+        this.bindGoodsCode = bindObjectCode;
     }
 
     public String getBindGoodsName() {
@@ -203,6 +223,14 @@ public class AggregateRfidIdentity extends BaseEntity {
         this.bindGoodsName = bindGoodsName;
     }
 
+    public String getBindObjectName() {
+        return bindGoodsName;
+    }
+
+    public void setBindObjectName(String bindObjectName) {
+        this.bindGoodsName = bindObjectName;
+    }
+
     public Date getBindGoodsTime() {
         return bindGoodsTime;
     }
@@ -211,12 +239,28 @@ public class AggregateRfidIdentity extends BaseEntity {
         this.bindGoodsTime = bindGoodsTime;
     }
 
+    public Date getBindObjectTime() {
+        return bindGoodsTime;
+    }
+
+    public void setBindObjectTime(Date bindObjectTime) {
+        this.bindGoodsTime = bindObjectTime;
+    }
+
     public String getUseStatus() {
         return useStatus;
     }
 
     public void setUseStatus(String useStatus) {
         this.useStatus = useStatus;
+    }
+
+    public Map<String, Object> getSubjectFieldMap() {
+        return subjectFieldMap;
+    }
+
+    public void setSubjectFieldMap(Map<String, Object> subjectFieldMap) {
+        this.subjectFieldMap = subjectFieldMap;
     }
 
     public String getCurrentLocation() {

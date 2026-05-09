@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseCheckReceiptDetailList" parameterType="WarehouseCheckReceiptDetail" resultMap="WarehouseCheckReceiptDetailResult">
         <include refid="selectWarehouseCheckReceiptDetailVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="checkReceiptId != null "> and check_receipt_id = #{checkReceiptId}</if>
             <if test="goodsId != null "> and goods_id = #{goodsId}</if>
             <if test="goodsChangeNumber != null "> and goods_change_number = #{goodsChangeNumber}</if>
@@ -31,11 +31,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="getCheckReceiptDetailList" parameterType="WarehouseCheckReceiptDetail" resultType="WarehouseCheckReceiptDetailDto">
         SELECT
-            a.`check_receipt_detail_id`,
-            a.`check_receipt_id`,
-            a.`goods_id`,
-            a.`goods_new_number`,
-            a.`remark`,
+            a."check_receipt_detail_id",
+            a."check_receipt_id",
+            a."goods_id",
+            a."goods_new_number",
+            a."remark",
             b.specification_type,
             b.goods_name,
             b.goods_code,
@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             a.check_receipt_detail_id,
             a.check_receipt_id,
             a.goods_id,
-            a.`remark`,
+            a."remark",
             b.goods_name,
             b.specification_type,
             b.goods_code,
@@ -66,7 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWarehouseCheckReceiptDetailByCheckReceiptDetailId" parameterType="Long" resultMap="WarehouseCheckReceiptDetailResult">
         <include refid="selectWarehouseCheckReceiptDetailVo"/>
-        where del_flag =0 and check_receipt_detail_id = #{checkReceiptDetailId}
+        where del_flag ='0' and check_receipt_detail_id = #{checkReceiptDetailId}
     </select>
         
     <insert id="insertWarehouseCheckReceiptDetail" parameterType="WarehouseCheckReceiptDetail" useGeneratedKeys="true" keyProperty="checkReceiptDetailId">
@@ -103,11 +103,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseCheckReceiptDetailByCheckReceiptDetailId" parameterType="Long">
-        update  warehouse_check_receipt_detail set del_flag = 1 where check_receipt_detail_id = #{checkReceiptDetailId}
+        update  warehouse_check_receipt_detail set del_flag = '1' where check_receipt_detail_id = #{checkReceiptDetailId}
     </update>
 
     <update id="deleteWarehouseCheckReceiptDetailByCheckReceiptDetailIds" parameterType="String">
-        update  warehouse_check_receipt_detail set del_flag = 1 where check_receipt_detail_id in
+        update  warehouse_check_receipt_detail set del_flag = '1' where check_receipt_detail_id in
         <foreach item="checkReceiptDetailId" collection="array" open="(" separator="," close=")">
             #{checkReceiptDetailId}
         </foreach>

@@ -46,7 +46,7 @@
     <select id="selectWarehouseInReceiptList" parameterType="WarehouseInReceipt" resultMap="WarehouseInReceiptResult">
         <include refid="selectWarehouseInReceiptVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="warehouseId != null ">and warehouse_id = #{warehouseId}</if>
             <if test="documentNumber != null  and documentNumber != ''">and document_number = #{documentNumber}</if>
             <if test="params.beginInWarehouseTime != null and params.beginInWarehouseTime != '' and params.endInWarehouseTime != null and params.endInWarehouseTime != ''">
@@ -67,7 +67,7 @@
     <select id="selectWarehouseInReceiptByWarehouseInReceiptId" parameterType="Long"
             resultMap="WarehouseInReceiptResult">
         <include refid="selectWarehouseInReceiptVo"/>
-        where del_flag =0 and warehouse_in_receipt_id = #{warehouseInReceiptId}
+        where del_flag ='0' and warehouse_in_receipt_id = #{warehouseInReceiptId}
     </select>
 
     <select id="getInReceiptScanList" parameterType="WarehouseInReceipt" resultType="WarehouseInReceiptVo">
@@ -82,7 +82,7 @@
         FROM warehouse_in_receipt a
                  LEFT JOIN warehouse b ON a.warehouse_id = b.warehouse_id
                  LEFT JOIN warehouse_supplier c ON c.supplier_id = a.supplier_id
-        where a.del_flag = 0
+        where a.del_flag = '0'
           and a.state = #{state}
         <!-- 数据范围过滤 -->
         ${params.warehouseScope}
@@ -101,7 +101,7 @@
         FROM warehouse_in_receipt a
                  LEFT JOIN warehouse b ON a.warehouse_id = b.warehouse_id
                  LEFT JOIN warehouse_supplier c ON c.supplier_id = a.supplier_id
-        where a.del_flag = 0
+        where a.del_flag = '0'
           and a.warehouse_in_receipt_id = #{receiptId}
     </select>
 
@@ -171,12 +171,12 @@
 
     <update id="deleteWarehouseInReceiptByWarehouseInReceiptId" parameterType="Long">
         update warehouse_in_receipt
-        set del_flag = 1
+        set del_flag = '1'
         where warehouse_in_receipt_id = #{warehouseInReceiptId}
     </update>
 
     <update id="deleteWarehouseInReceiptByWarehouseInReceiptIds" parameterType="String">
-        update warehouse_in_receipt set del_flag = 1 where warehouse_in_receipt_id in
+        update warehouse_in_receipt set del_flag = '1' where warehouse_in_receipt_id in
         <foreach item="warehouseInReceiptId" collection="array" open="(" separator="," close=")">
             #{warehouseInReceiptId}
         </foreach>

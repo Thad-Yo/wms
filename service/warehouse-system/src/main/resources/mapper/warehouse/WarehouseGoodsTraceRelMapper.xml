@@ -66,7 +66,7 @@
     <select id="selectWarehouseGoodsTraceRelByTraceRecordId" parameterType="Long"
             resultMap="WarehouseGoodsTraceRelResult">
         <include refid="selectWarehouseGoodsTraceRelVo"/>
-        where del_flag =0 and trace_record_id = #{traceRecordId}
+        where del_flag ='0' and trace_record_id = #{traceRecordId}
     </select>
 
     <insert id="insertWarehouseGoodsTraceRel" parameterType="WarehouseGoodsTraceRel" useGeneratedKeys="true"
@@ -99,12 +99,12 @@
 
     <update id="deleteWarehouseGoodsTraceRelByTraceRecordId" parameterType="Long">
         update warehouse_goods_trace_rel
-        set del_flag = 1
+        set del_flag = '1'
         where trace_record_id = #{traceRecordId}
     </update>
 
     <update id="deleteWarehouseGoodsTraceRelByTraceRecordIds" parameterType="String">
-        update warehouse_goods_trace_rel set del_flag = 1 where trace_record_id in
+        update warehouse_goods_trace_rel set del_flag = '1' where trace_record_id in
         <foreach item="traceRecordId" collection="array" open="(" separator="," close=")">
             #{traceRecordId}
         </foreach>

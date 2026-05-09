@@ -1,10 +1,14 @@
 package com.xiaoyai.warehouse.domain.aggregate;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xiaoyai.common.annotation.Excel;
 import com.xiaoyai.common.core.domain.BaseEntity;
+
+import java.util.Date;
 
 /**
  * 数字骨料基础档案 aggregate_material
@@ -34,6 +38,18 @@ public class AggregateMaterial extends BaseEntity {
     @Excel(name = "批次号")
     private String batchNo;
 
+    @Excel(name = "单据状态")
+    private String state;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "审核时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    private Date auditTime;
+
+    private Long auditId;
+
+    @Excel(name = "审核人")
+    private String auditName;
+
     private Long supplierId;
 
     @Excel(name = "供应商")
@@ -59,6 +75,9 @@ public class AggregateMaterial extends BaseEntity {
 
     @Excel(name = "未使用数量")
     private Long unusedRfidCount;
+
+    @TableField(exist = false)
+    private String rfidCodes;
 
     public Long getMaterialId() {
         return materialId;
@@ -114,6 +133,38 @@ public class AggregateMaterial extends BaseEntity {
 
     public void setBatchNo(String batchNo) {
         this.batchNo = batchNo;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public Date getAuditTime() {
+        return auditTime;
+    }
+
+    public void setAuditTime(Date auditTime) {
+        this.auditTime = auditTime;
+    }
+
+    public Long getAuditId() {
+        return auditId;
+    }
+
+    public void setAuditId(Long auditId) {
+        this.auditId = auditId;
+    }
+
+    public String getAuditName() {
+        return auditName;
+    }
+
+    public void setAuditName(String auditName) {
+        this.auditName = auditName;
     }
 
     public Long getSupplierId() {
@@ -186,5 +237,13 @@ public class AggregateMaterial extends BaseEntity {
 
     public void setUnusedRfidCount(Long unusedRfidCount) {
         this.unusedRfidCount = unusedRfidCount;
+    }
+
+    public String getRfidCodes() {
+        return rfidCodes;
+    }
+
+    public void setRfidCodes(String rfidCodes) {
+        this.rfidCodes = rfidCodes;
     }
 }

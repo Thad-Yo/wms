@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyai.warehouse.mapper.BoneObjectMapper">
+    <resultMap id="BoneObjectResult" type="com.xiaoyai.warehouse.domain.aggregate.BoneObject">
+        <result property="objectId" column="object_id"/>
+        <result property="objectCode" column="object_code"/>
+        <result property="objectName" column="object_name"/>
+        <result property="objectType" column="object_type"/>
+        <result property="templateId" column="template_id"/>
+        <result property="templateCode" column="template_code"/>
+        <result property="templateName" column="template_name"/>
+        <result property="boneRfidId" column="bone_rfid_id"/>
+        <result property="boneRfidCode" column="bone_rfid_code"/>
+        <result property="bindStatus" column="bind_status"/>
+        <result property="lifecycleStatus" column="lifecycle_status"/>
+        <result property="ownerUserId" column="owner_user_id"/>
+        <result property="ownerUserName" column="owner_user_name"/>
+        <result property="sourceSystem" column="source_system"/>
+        <result property="searchText" column="search_text"/>
+        <result property="fixedDataJson" column="fixed_data_json"/>
+        <result property="dynamicDataJson" column="dynamic_data_json"/>
+        <result property="traceDataJson" column="trace_data_json"/>
+        <result property="extDataJson" column="ext_data_json"/>
+        <result property="bindTime" column="bind_time"/>
+        <result property="unbindTime" column="unbind_time"/>
+        <result property="completedTime" column="completed_time"/>
+        <result property="boneStatus" column="bone_status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <resultMap id="BoneRfidResult" type="com.xiaoyai.warehouse.domain.aggregate.BoneRfid">
+        <result property="boneRfidId" column="bone_rfid_id"/>
+        <result property="boneRfidCode" column="bone_rfid_code"/>
+        <result property="tidCode" column="tid_code"/>
+        <result property="boneCode" column="bone_code"/>
+        <result property="boneName" column="bone_name"/>
+        <result property="status" column="status"/>
+        <result property="currentObjectId" column="current_object_id"/>
+        <result property="currentObjectCode" column="current_object_code"/>
+        <result property="currentObjectName" column="current_object_name"/>
+    </resultMap>
+
+    <resultMap id="BoneObjectEventResult" type="com.xiaoyai.warehouse.domain.aggregate.BoneObjectEvent">
+        <result property="eventId" column="event_id"/>
+        <result property="objectId" column="object_id"/>
+        <result property="objectCode" column="object_code"/>
+        <result property="objectName" column="object_name"/>
+        <result property="boneRfidId" column="bone_rfid_id"/>
+        <result property="boneRfidCode" column="bone_rfid_code"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventName" column="event_name"/>
+        <result property="eventTime" column="event_time"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="location" column="location"/>
+        <result property="sourceModule" column="source_module"/>
+        <result property="sourceSystem" column="source_system"/>
+        <result property="sourceDeviceCode" column="source_device_code"/>
+        <result property="warehouseId" column="warehouse_id"/>
+        <result property="warehouseName" column="warehouse_name"/>
+        <result property="snapshotData" column="snapshot_data"/>
+        <result property="beforeData" column="before_data"/>
+        <result property="changedFields" column="changed_fields"/>
+        <result property="extData" column="ext_data"/>
+        <result property="prevEventHash" column="prev_event_hash"/>
+        <result property="eventHash" column="event_hash"/>
+    </resultMap>
+
+    <select id="selectBoneObjectList" parameterType="com.xiaoyai.warehouse.domain.aggregate.BoneObject" resultMap="BoneObjectResult">
+        select o.object_id,
+               o.object_code,
+               o.object_name,
+               o.object_type,
+               o.template_id,
+               o.template_code,
+               o.template_name,
+               o.bone_rfid_id,
+               o.bone_rfid_code,
+               o.bind_status,
+               o.lifecycle_status,
+               o.owner_user_id,
+               o.owner_user_name,
+               o.source_system,
+               o.search_text,
+               o.fixed_data::text as fixed_data_json,
+               o.dynamic_data::text as dynamic_data_json,
+               o.trace_data::text as trace_data_json,
+               o.ext_data::text as ext_data_json,
+               o.bind_time,
+               o.unbind_time,
+               o.completed_time,
+               br.status as bone_status,
+               o.del_flag,
+               o.create_by,
+               o.create_time,
+               o.update_by,
+               o.update_time,
+               o.remark
+        from "object" o
+        left join bone_rfid br on br.bone_rfid_id = o.bone_rfid_id
+        <where>
+            and o.del_flag = '0'
+            <if test="objectCode != null and objectCode != ''">and o.object_code like concat('%', #{objectCode}, '%')</if>
+            <if test="objectName != null and objectName != ''">and o.object_name like concat('%', #{objectName}, '%')</if>
+            <if test="objectType != null and objectType != ''">and o.object_type = #{objectType}</if>
+            <if test="bindStatus != null and bindStatus != ''">and o.bind_status = #{bindStatus}</if>
+            <if test="ownerUserId != null">and o.owner_user_id = #{ownerUserId}</if>
+        </where>
+        order by o.object_id desc
+    </select>
+
+    <select id="selectBoneObjectById" resultMap="BoneObjectResult">
+        select o.object_id,
+               o.object_code,
+               o.object_name,
+               o.object_type,
+               o.template_id,
+               o.template_code,
+               o.template_name,
+               o.bone_rfid_id,
+               o.bone_rfid_code,
+               o.bind_status,
+               o.lifecycle_status,
+               o.owner_user_id,
+               o.owner_user_name,
+               o.source_system,
+               o.search_text,
+               o.fixed_data::text as fixed_data_json,
+               o.dynamic_data::text as dynamic_data_json,
+               o.trace_data::text as trace_data_json,
+               o.ext_data::text as ext_data_json,
+               o.bind_time,
+               o.unbind_time,
+               o.completed_time,
+               br.status as bone_status,
+               o.del_flag,
+               o.create_by,
+               o.create_time,
+               o.update_by,
+               o.update_time,
+               o.remark
+        from "object" o
+        left join bone_rfid br on br.bone_rfid_id = o.bone_rfid_id
+        where o.object_id = #{objectId}
+    </select>
+
+    <insert id="insertBoneObject" parameterType="com.xiaoyai.warehouse.domain.aggregate.BoneObject" useGeneratedKeys="true" keyProperty="objectId">
+        insert into "object"
+        (object_code, object_name, object_type, template_id, template_code, template_name, bone_rfid_id, bone_rfid_code,
+         bind_status, lifecycle_status, owner_user_id, owner_user_name, source_system, search_text,
+         fixed_data, dynamic_data, trace_data, ext_data, bind_time, unbind_time, completed_time,
+         del_flag, create_by, create_time, update_by, update_time, remark)
+        values
+        (#{objectCode}, #{objectName}, #{objectType}, #{templateId}, #{templateCode}, #{templateName}, #{boneRfidId}, #{boneRfidCode},
+         #{bindStatus}, #{lifecycleStatus}, #{ownerUserId}, #{ownerUserName}, #{sourceSystem}, #{searchText},
+         cast(#{fixedDataJson} as jsonb), cast(#{dynamicDataJson} as jsonb), cast(#{traceDataJson} as jsonb), cast(#{extDataJson} as jsonb),
+         #{bindTime}, #{unbindTime}, #{completedTime},
+         coalesce(#{delFlag}, '0'), #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{remark})
+    </insert>
+
+    <update id="updateBoneObject" parameterType="com.xiaoyai.warehouse.domain.aggregate.BoneObject">
+        update "object"
+        set object_code = #{objectCode},
+            object_name = #{objectName},
+            object_type = #{objectType},
+            template_id = #{templateId},
+            template_code = #{templateCode},
+            template_name = #{templateName},
+            bone_rfid_id = #{boneRfidId},
+            bone_rfid_code = #{boneRfidCode},
+            bind_status = #{bindStatus},
+            lifecycle_status = #{lifecycleStatus},
+            owner_user_id = #{ownerUserId},
+            owner_user_name = #{ownerUserName},
+            source_system = #{sourceSystem},
+            search_text = #{searchText},
+            fixed_data = cast(#{fixedDataJson} as jsonb),
+            dynamic_data = cast(#{dynamicDataJson} as jsonb),
+            trace_data = cast(#{traceDataJson} as jsonb),
+            ext_data = cast(#{extDataJson} as jsonb),
+            bind_time = #{bindTime},
+            unbind_time = #{unbindTime},
+            completed_time = #{completedTime},
+            update_by = #{updateBy},
+            update_time = #{updateTime},
+            remark = #{remark}
+        where object_id = #{objectId}
+    </update>
+
+    <select id="selectAvailableBoneRfidList" resultMap="BoneRfidResult">
+        select bone_rfid_id, bone_rfid_code, tid_code, bone_code, bone_name, status,
+               current_object_id, current_object_code, current_object_name
+        from bone_rfid
+        <where>
+            and del_flag = '0'
+            and current_object_id is null
+            <if test="keyword != null and keyword != ''">
+                and (bone_rfid_code like concat('%', #{keyword}, '%')
+                or bone_code like concat('%', #{keyword}, '%')
+                or bone_name like concat('%', #{keyword}, '%'))
+            </if>
+        </where>
+        order by bone_rfid_id desc
+    </select>
+
+    <select id="selectBoneRfidById" resultMap="BoneRfidResult">
+        select bone_rfid_id, bone_rfid_code, tid_code, bone_code, bone_name, status,
+               current_object_id, current_object_code, current_object_name
+        from bone_rfid
+        where bone_rfid_id = #{boneRfidId} and del_flag = '0'
+    </select>
+
+    <select id="selectBoneRfidByCode" resultMap="BoneRfidResult">
+        select bone_rfid_id, bone_rfid_code, tid_code, bone_code, bone_name, status,
+               current_object_id, current_object_code, current_object_name
+        from bone_rfid
+        where bone_rfid_code = #{boneRfidCode} and del_flag = '0'
+    </select>
+
+    <insert id="insertBoneRfid" parameterType="com.xiaoyai.warehouse.domain.aggregate.BoneRfid" useGeneratedKeys="true" keyProperty="boneRfidId">
+        insert into bone_rfid
+        (bone_rfid_code, tid_code, bone_code, bone_name, status, del_flag, create_by, create_time, update_by, update_time, remark)
+        values
+        (#{boneRfidCode}, #{tidCode}, #{boneCode}, #{boneName}, #{status}, coalesce(#{delFlag}, '0'),
+         #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{remark})
+    </insert>
+
+    <update id="bindBoneRfidToObject">
+        update "object"
+        set bone_rfid_id = #{boneRfidId},
+            bone_rfid_code = #{boneRfidCode},
+            bind_status = 'BOUND',
+            lifecycle_status = case when lifecycle_status = 'CREATED' then 'BOUND' else lifecycle_status end,
+            bind_time = current_timestamp,
+            update_by = #{updateBy},
+            update_time = current_timestamp
+        where object_id = #{objectId}
+    </update>
+
+    <update id="occupyBoneRfid">
+        update bone_rfid
+        set current_object_id = #{objectId},
+            current_object_code = #{objectCode},
+            current_object_name = #{objectName},
+            status = 'IN_USE',
+            activated_time = coalesce(activated_time, current_timestamp),
+            last_event_time = current_timestamp,
+            update_by = #{updateBy},
+            update_time = current_timestamp
+        where bone_rfid_id = #{boneRfidId}
+    </update>
+
+    <insert id="insertBoneObjectEvent" parameterType="com.xiaoyai.warehouse.domain.aggregate.BoneObjectEvent" useGeneratedKeys="true" keyProperty="eventId">
+        insert into object_event
+        (object_id, object_code, object_name, bone_rfid_id, bone_rfid_code, event_type, event_name, event_time,
+         operator_id, operator_name, location, source_module, source_system, source_device_code,
+         warehouse_id, warehouse_name, snapshot_data, before_data, changed_fields, ext_data, prev_event_hash, event_hash, create_by, create_time)
+        values
+        (#{objectId}, #{objectCode}, #{objectName}, #{boneRfidId}, #{boneRfidCode}, #{eventType}, #{eventName}, #{eventTime},
+         #{operatorId}, #{operatorName}, #{location}, #{sourceModule}, #{sourceSystem}, #{sourceDeviceCode},
+         #{warehouseId}, #{warehouseName}, cast(#{snapshotData} as jsonb), cast(#{beforeData} as jsonb),
+         cast(#{changedFields} as jsonb), cast(#{extData} as jsonb), #{prevEventHash}, #{eventHash}, #{operatorName}, current_timestamp)
+    </insert>
+
+    <select id="selectBoneObjectEventList" resultMap="BoneObjectEventResult">
+        select event_id, object_id, object_code, object_name, bone_rfid_id, bone_rfid_code,
+               event_type, event_name, event_time, operator_id, operator_name, location, source_module,
+               source_system, source_device_code, warehouse_id, warehouse_name,
+               snapshot_data::text as snapshot_data, before_data::text as before_data,
+               changed_fields::text as changed_fields, ext_data::text as ext_data,
+               prev_event_hash, event_hash
+        from object_event
+        where object_id = #{objectId} and del_flag = '0'
+        order by event_time desc, event_id desc
+    </select>
+</mapper>

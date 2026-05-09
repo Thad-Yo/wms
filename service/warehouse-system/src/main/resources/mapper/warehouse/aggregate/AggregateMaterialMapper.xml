@@ -11,6 +11,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="specification" column="specification"/>
         <result property="originPlace" column="origin_place"/>
         <result property="batchNo" column="batch_no"/>
+        <result property="state" column="state"/>
+        <result property="auditTime" column="audit_time"/>
+        <result property="auditId" column="audit_id"/>
+        <result property="auditName" column="audit_name"/>
         <result property="supplierId" column="supplier_id"/>
         <result property="supplierName" column="supplier_name"/>
         <result property="unit" column="unit"/>
@@ -36,6 +40,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                m.specification,
                m.origin_place,
                m.batch_no,
+               m.state,
+               m.audit_time,
+               m.audit_id,
+               m.audit_name,
                m.supplier_id,
                m.supplier_name,
                m.unit,
@@ -59,10 +67,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="materialName != null and materialName != ''">and m.material_name like concat('%', #{materialName}, '%')</if>
             <if test="materialType != null and materialType != ''">and m.material_type = #{materialType}</if>
             <if test="batchNo != null and batchNo != ''">and m.batch_no = #{batchNo}</if>
+            <if test="state != null and state != ''">
+                <choose>
+                    <when test="state == '3'">and m.state in ('1', '3')</when>
+                    <otherwise>and m.state = #{state}</otherwise>
+                </choose>
+            </if>
             <if test="ownerUserId != null">and m.owner_user_id = #{ownerUserId}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">and m.create_time &gt;= #{params.beginCreateTime}</if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">and m.create_time &lt;= #{params.endCreateTime}</if>
         </where>
         group by m.material_id, m.material_code, m.material_name, m.material_type, m.specification,
-                 m.origin_place, m.batch_no, m.supplier_id, m.supplier_name, m.unit, m.quality_grade,
+                 m.origin_place, m.batch_no, m.state, m.audit_time, m.audit_id, m.audit_name, m.supplier_id, m.supplier_name, m.unit, m.quality_grade,
                  m.owner_user_id, m.owner_user_name, m.del_flag, m.create_by, m.create_time,
                  m.update_by, m.update_time, m.remark
         order by m.material_id desc

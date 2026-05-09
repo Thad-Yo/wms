@@ -44,7 +44,7 @@
         n.task_description taskDescription,
         n.task_desc_id taskDescId,
         n.create_time createTime,
-        u.`name` userName,
+        u."name" userName,
         c. NAME procName,
         c.type procType,
         c.proc_num procNum,
@@ -369,16 +369,16 @@
 
     <select id="queryTaskBusinessDetail" parameterType="Map" resultType="Map">
         SELECT
-        n.`task_desc_id` taskDescId,
-        n.`task_description` taskDescription,
-        n.`task_apply_user_id` taskApplyUserId,
-        n.`business_id` businessId,
-        n.`proc_id` procId,
-        n.`emergency_level` emergencyLevel,
-        n.`PROC_INST_ID_` processInstanceId,
-        n.`status_type` statusType,
-        n.`create_time` createTime,
-        n.`file_address` fileAddress,
+        n."task_desc_id" taskDescId,
+        n."task_description" taskDescription,
+        n."task_apply_user_id" taskApplyUserId,
+        n."business_id" businessId,
+        n."proc_id" procId,
+        n."emergency_level" emergencyLevel,
+        n."PROC_INST_ID_" processInstanceId,
+        n."status_type" statusType,
+        n."create_time" createTime,
+        n."file_address" fileAddress,
         c.proc_name procName
         FROM
         act_task_description n
@@ -392,11 +392,11 @@
         </if>
     </select>
     <select id="getTypeIdByProcessCode" parameterType="Map" resultType="Map">
-        SELECT mt.type_id  FROM `act_all_proc` ap LEFT JOIN message_type mt ON ap.type=mt.type_class WHERE ap.process_code=#{processCode};
+        SELECT mt.type_id  FROM "act_all_proc" ap LEFT JOIN message_type mt ON ap.type=mt.type_class WHERE ap.process_code=#{processCode};
     </select>
 
     <update id="updateTaskStatus" parameterType="Map">
-        UPDATE act_ru_variable a SET a.`TEXT_` = #{query.processStatus} WHERE a.`PROC_INST_ID_` = #{query.processInstanceId} and a.NAME_ = #{query.name}
+        UPDATE act_ru_variable a SET a."TEXT_" = #{query.processStatus} WHERE a."PROC_INST_ID_" = #{query.processInstanceId} and a.NAME_ = #{query.name}
 
     </update>
 
@@ -409,7 +409,7 @@
         SELECT
         j.job_title_id jobTitleId,
         u.user_id userId,
-        u.`name` userName
+        u."name" userName
         FROM
         u_job_title j
         LEFT JOIN u_user u ON u.job_title_id = j.job_title_id
@@ -455,9 +455,9 @@
 
     <select id="getActDescriptionInfo" parameterType="Map" resultType="Map">
         SELECT
-            act.`task_desc_id` taskDescId,
-            act.`task_description` taskDescription,
-            act.`task_apply_user_name` taskApplyUserName,
+            act."task_desc_id" taskDescId,
+            act."task_description" taskDescription,
+            act."task_apply_user_name" taskApplyUserName,
             aap.proc_num procNum
         FROM
             act_task_description act
@@ -599,7 +599,7 @@
         atd.task_description_supplement taskDescriptionSupplement,
         atd.task_desc_id taskDescId,
         atd.create_time createTime,
-        u.`nick_name` userName,
+        u."nick_name" userName,
         c. NAME procName,
         c.type procType,
         c.proc_num procNum,
@@ -656,9 +656,9 @@
         atd.task_description_supplement taskDescriptionSupplement,
         atd.task_apply_user_name userName,
         atd.create_time createTime,
-        aap.`name` procTypeName,
+        aap."name" procTypeName,
         aht.ACT_NAME_ nodeName,
-        ue.`nick_name` untreatedUser,
+        ue."nick_name" untreatedUser,
         aap.proc_num procNum,
         aap.process_code processCode
         FROM
@@ -967,46 +967,46 @@
     <select id="selectRunTaskInfoByTaskId" parameterType="Map" resultType="Map">
         select
           art.ID_,
-          art.`PROC_DEF_ID_`,
-          art.`TASK_DEF_KEY_`,
-          art.`PROC_INST_ID_`,
-          art.`EXECUTION_ID_`,
-          art.`NAME_`,
-          art.`PARENT_TASK_ID_`,
-          art.`DESCRIPTION_`,
-          art.`OWNER_`,
-          art.`ASSIGNEE_`,
-          art.`CREATE_TIME_`,
+          art."PROC_DEF_ID_",
+          art."TASK_DEF_KEY_",
+          art."PROC_INST_ID_",
+          art."EXECUTION_ID_",
+          art."NAME_",
+          art."PARENT_TASK_ID_",
+          art."DESCRIPTION_",
+          art."OWNER_",
+          art."ASSIGNEE_",
+          art."CREATE_TIME_",
           now() END_TIME_,
-          TIMESTAMPDIFF(SECOND,art.`CREATE_TIME_`,now()) DURATION_,
-          art.`PRIORITY_`,
-          art.`DUE_DATE_`,
-          art.`FORM_KEY_`,
-          art.`CATEGORY_`,
-          art.`TENANT_ID_`
+          TIMESTAMPDIFF(SECOND,art."CREATE_TIME_",now()) DURATION_,
+          art."PRIORITY_",
+          art."DUE_DATE_",
+          art."FORM_KEY_",
+          art."CATEGORY_",
+          art."TENANT_ID_"
           from act_ru_task art where art.ID_ = #{query.taskId}
     </select>
 
     <insert id="insertRecordToHistoryTask" parameterType="Map">
         insert into act_hi_taskinst(
-          `ID_`,
-          `PROC_DEF_ID_`,
-          `TASK_DEF_KEY_`,
-          `PROC_INST_ID_`,
-          `EXECUTION_ID_`,
-          `NAME_`,
-          `PARENT_TASK_ID_`,
-          `DESCRIPTION_`,
-          `OWNER_`,
-          `ASSIGNEE_`,
-          `START_TIME_`,
-          `END_TIME_`,
-          `DURATION_`,
-          `PRIORITY_`,
-          `DUE_DATE_`,
-          `FORM_KEY_`,
-          `CATEGORY_`,
-          `TENANT_ID_`
+          "ID_",
+          "PROC_DEF_ID_",
+          "TASK_DEF_KEY_",
+          "PROC_INST_ID_",
+          "EXECUTION_ID_",
+          "NAME_",
+          "PARENT_TASK_ID_",
+          "DESCRIPTION_",
+          "OWNER_",
+          "ASSIGNEE_",
+          "START_TIME_",
+          "END_TIME_",
+          "DURATION_",
+          "PRIORITY_",
+          "DUE_DATE_",
+          "FORM_KEY_",
+          "CATEGORY_",
+          "TENANT_ID_"
         )values (
           #{query.ID_},
           #{query.PROC_DEF_ID_},
@@ -1198,24 +1198,24 @@
 
     <insert id="saveHistoryTaskInfoBatch" parameterType="Map">
         insert into act_hi_taskinst(
-        `ID_`,
-        `PROC_DEF_ID_`,
-        `TASK_DEF_KEY_`,
-        `PROC_INST_ID_`,
-        `EXECUTION_ID_`,
-        `NAME_`,
-        `PARENT_TASK_ID_`,
-        `DESCRIPTION_`,
-        `OWNER_`,
-        `ASSIGNEE_`,
-        `START_TIME_`,
-        `END_TIME_`,
-        `DURATION_`,
-        `PRIORITY_`,
-        `DUE_DATE_`,
-        `FORM_KEY_`,
-        `CATEGORY_`,
-        `TENANT_ID_`
+        "ID_",
+        "PROC_DEF_ID_",
+        "TASK_DEF_KEY_",
+        "PROC_INST_ID_",
+        "EXECUTION_ID_",
+        "NAME_",
+        "PARENT_TASK_ID_",
+        "DESCRIPTION_",
+        "OWNER_",
+        "ASSIGNEE_",
+        "START_TIME_",
+        "END_TIME_",
+        "DURATION_",
+        "PRIORITY_",
+        "DUE_DATE_",
+        "FORM_KEY_",
+        "CATEGORY_",
+        "TENANT_ID_"
         )values
         <foreach collection="historyTaskList" item="task" separator=",">
             (
@@ -1375,7 +1375,7 @@
 
     <select id="getMessageTypeByMap" resultType="Map" parameterType="Map">
         SELECT r.rel_id relId,r.employee_id employeeId,r.type_id typeId,u.open_id openId,u.app_cid appCid FROM
-        `message_employee_rel` r
+        "message_employee_rel" r
         LEFT JOIN u_user u ON r.employee_id=u.employee_id
         WHERE 1=1
         <if test="employeeIds != null and employeeIds.size > 0">
@@ -1390,7 +1390,7 @@
         SELECT
           t.type_id typeId
         FROM
-          `message_type` t
+          "message_type" t
         LEFT JOIN message_employee_rel r ON t.type_parent_id = r.type_id
         WHERE
           r.employee_id =#{employeeId};
@@ -1449,7 +1449,7 @@
                     aht.END_TIME_ endTime,
                     aht.DURATION_ dunration,
                     aht.ID_ taskId,
-                    ue.`nick_name` employeeName,
+                    ue."nick_name" employeeName,
                     ahc.MESSAGE_ processComment
                 FROM
                     act_hi_taskinst aht
@@ -1467,7 +1467,7 @@
                         aht.END_TIME_ endTime,
                         aht.DURATION_ dunration,
                         aht.ID_ taskId,
-                        ue.`nick_name` employeeName,
+                        ue."nick_name" employeeName,
                         ahc.MESSAGE_ processComment
                     FROM
                         act_hi_taskinst aht
@@ -1507,18 +1507,18 @@
 
     <select id="queryProcessDescByInstanceId" parameterType="Map" resultType="Map">
         SELECT
-		atd.`task_desc_id` taskDescId,
-		atd.`task_description` taskDescription,
-		atd.`task_apply_user_id` taskApplyUserId,
-		atd.`task_apply_user_name` taskApplyUserName,
-		atd.`process_code` processCode,
-		atdf.`form_value` formValue,
-		atd.`proc_instance_id`,
-		atd.`status_cd`,
-		atd.`create_time`,
-		atd.`community_id`,
+		atd."task_desc_id" taskDescId,
+		atd."task_description" taskDescription,
+		atd."task_apply_user_id" taskApplyUserId,
+		atd."task_apply_user_name" taskApplyUserName,
+		atd."process_code" processCode,
+		atdf."form_value" formValue,
+		atd."proc_instance_id",
+		atd."status_cd",
+		atd."create_time",
+		atd."community_id",
 		atd.task_description_supplement taskDescriptionSupplement,
-		aap.`proc_num` procNum
+		aap."proc_num" procNum
         FROM
             act_task_description atd
         LEFT JOIN act_task_description_form atdf ON atdf.task_desc_id = atd.task_desc_id

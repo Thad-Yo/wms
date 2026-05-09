@@ -42,7 +42,13 @@ public class AggregateMaterialController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('warehouse:aggregate:material:add')")
-    @Log(title = "数字骨料档案", businessType = BusinessType.INSERT)
+    @GetMapping("/nextBatchNo")
+    public AjaxResult nextBatchNo() {
+        return AjaxResult.success(aggregateMaterialService.previewNextBatchNo());
+    }
+
+    @PreAuthorize("@ss.hasPermi('warehouse:aggregate:material:add')")
+    @Log(title = "骨料档案", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody AggregateMaterial aggregateMaterial) {
         aggregateMaterial.setCreateBy(getUsername());
@@ -50,7 +56,7 @@ public class AggregateMaterialController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('warehouse:aggregate:material:import')")
-    @Log(title = "数字骨料批量发行", businessType = BusinessType.IMPORT)
+    @Log(title = "骨料批次创建", businessType = BusinessType.IMPORT)
     @PostMapping("/importBatch")
     public AjaxResult importBatch(@RequestBody AggregateMaterialImportDto importDto) {
         importDto.setCreateBy(getUsername());
@@ -58,15 +64,25 @@ public class AggregateMaterialController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('warehouse:aggregate:material:edit')")
-    @Log(title = "数字骨料档案", businessType = BusinessType.UPDATE)
+    @Log(title = "骨料档案", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody AggregateMaterial aggregateMaterial) {
         aggregateMaterial.setUpdateBy(getUsername());
         return toAjax(aggregateMaterialService.updateAggregateMaterial(aggregateMaterial));
     }
 
+    @PreAuthorize("@ss.hasPermi('warehouse:aggregate:material:edit')")
+    @Log(title = "骨料档案审核", businessType = BusinessType.UPDATE)
+    @PostMapping("/approve")
+    public AjaxResult approve(@RequestBody AggregateMaterial aggregateMaterial) {
+        aggregateMaterial.setAuditId(getUserId());
+        aggregateMaterial.setAuditName(getLoginUser().getUser().getNickName());
+        aggregateMaterial.setUpdateBy(getUsername());
+        return toAjax(aggregateMaterialService.approveAggregateMaterial(aggregateMaterial));
+    }
+
     @PreAuthorize("@ss.hasPermi('warehouse:aggregate:material:remove')")
-    @Log(title = "数字骨料档案", businessType = BusinessType.DELETE)
+    @Log(title = "骨料档案", businessType = BusinessType.DELETE)
     @DeleteMapping("/{materialIds}")
     public AjaxResult remove(@PathVariable Long[] materialIds) {
         return toAjax(aggregateMaterialService.deleteAggregateMaterialByIds(materialIds));

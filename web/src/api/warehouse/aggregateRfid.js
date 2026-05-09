@@ -15,6 +15,13 @@ export function getAggregateRfid(identityId) {
   })
 }
 
+export function listAggregateRfidByMaterial(materialId) {
+  return request({
+    url: '/warehouse/aggregate/rfid/material/' + materialId,
+    method: 'get'
+  })
+}
+
 export function addAggregateRfid(data) {
   return request({
     url: '/warehouse/aggregate/rfid',
@@ -31,17 +38,25 @@ export function updateAggregateRfid(data) {
   })
 }
 
-export function bindAggregateRfidGoods(data) {
+export function bindAggregateRfidObject(data) {
   return request({
-    url: '/warehouse/aggregate/rfid/bindGoods',
+    url: '/warehouse/aggregate/rfid/bindObject',
     method: 'put',
     data: data
   })
 }
 
-export function listAggregateRfidGoodsOptions(query) {
+export function exportAggregateRfidBindTemplate() {
   return request({
-    url: '/warehouse/aggregate/rfid/goodsOptions',
+    url: '/warehouse/aggregate/rfid/exportBindTemplate',
+    method: 'post',
+    responseType: 'blob'
+  })
+}
+
+export function listAggregateRfidObjectOptions(query) {
+  return request({
+    url: '/warehouse/aggregate/rfid/objectOptions',
     method: 'get',
     params: query
   })

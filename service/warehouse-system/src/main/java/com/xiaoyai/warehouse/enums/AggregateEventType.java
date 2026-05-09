@@ -1,14 +1,15 @@
 package com.xiaoyai.warehouse.enums;
 
 /**
- * 数字骨料事件类型
+ * 骨料事件类型
  */
 public enum AggregateEventType {
     CREATED("CREATED", "RFID建档"),
     INBOUND("INBOUND", "入库"),
     OUTBOUND("OUTBOUND", "出库"),
     TRANSFER("TRANSFER", "移动"),
-    BIND_GOODS("BIND_GOODS", "绑定货品");
+    BIND_OBJECT("BIND_OBJECT", "绑定骨料"),
+    BIND_GOODS("BIND_GOODS", "绑定骨料");
 
     private final String code;
     private final String name;

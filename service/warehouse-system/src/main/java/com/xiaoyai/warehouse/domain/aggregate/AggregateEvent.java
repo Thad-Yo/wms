@@ -1,6 +1,7 @@
 package com.xiaoyai.warehouse.domain.aggregate;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 数字骨料RFID事件流水 aggregate_event
+ * 骨料RFID事件流水 aggregate_event
  */
 @TableName("aggregate_event")
 public class AggregateEvent extends BaseEntity {
@@ -23,6 +24,7 @@ public class AggregateEvent extends BaseEntity {
     @Excel(name = "RFID/EPC编码")
     private String rfidCode;
     private Long materialId;
+    private Long objectId;
     @Excel(name = "事件类型")
     private String eventType;
     @Excel(name = "事件名称")
@@ -30,6 +32,7 @@ public class AggregateEvent extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date eventTime;
     private String locationName;
+    private String sourceModule;
     private BigDecimal longitude;
     private BigDecimal latitude;
     private Long operatorId;
@@ -50,6 +53,9 @@ public class AggregateEvent extends BaseEntity {
     private Long sourceReceiptId;
     private String sourceReceiptNo;
     private String rawPayload;
+    private String snapshotData;
+    @TableField(exist = false)
+    private String prevSnapshotData;
 
     public Long getEventId() { return eventId; }
     public void setEventId(Long eventId) { this.eventId = eventId; }
@@ -59,6 +65,8 @@ public class AggregateEvent extends BaseEntity {
     public void setRfidCode(String rfidCode) { this.rfidCode = rfidCode; }
     public Long getMaterialId() { return materialId; }
     public void setMaterialId(Long materialId) { this.materialId = materialId; }
+    public Long getObjectId() { return objectId; }
+    public void setObjectId(Long objectId) { this.objectId = objectId; }
     public String getEventType() { return eventType; }
     public void setEventType(String eventType) { this.eventType = eventType; }
     public String getEventName() { return eventName; }
@@ -67,6 +75,8 @@ public class AggregateEvent extends BaseEntity {
     public void setEventTime(Date eventTime) { this.eventTime = eventTime; }
     public String getLocationName() { return locationName; }
     public void setLocationName(String locationName) { this.locationName = locationName; }
+    public String getSourceModule() { return sourceModule; }
+    public void setSourceModule(String sourceModule) { this.sourceModule = sourceModule; }
     public BigDecimal getLongitude() { return longitude; }
     public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
     public BigDecimal getLatitude() { return latitude; }
@@ -107,4 +117,8 @@ public class AggregateEvent extends BaseEntity {
     public void setSourceReceiptNo(String sourceReceiptNo) { this.sourceReceiptNo = sourceReceiptNo; }
     public String getRawPayload() { return rawPayload; }
     public void setRawPayload(String rawPayload) { this.rawPayload = rawPayload; }
+    public String getSnapshotData() { return snapshotData; }
+    public void setSnapshotData(String snapshotData) { this.snapshotData = snapshotData; }
+    public String getPrevSnapshotData() { return prevSnapshotData; }
+    public void setPrevSnapshotData(String prevSnapshotData) { this.prevSnapshotData = prevSnapshotData; }
 }

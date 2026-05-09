@@ -51,7 +51,7 @@
             resultMap="WarehouseOutReceiptResult">
         <include refid="selectWarehouseOutReceiptVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="warehouseId != null ">and warehouse_id = #{warehouseId}</if>
             <if test="documentNumber != null  and documentNumber != ''">and document_number = #{documentNumber}</if>
             <if test="params.beginOutWarehouseTime != null and params.beginOutWarehouseTime != '' and params.endOutWarehouseTime != null and params.endOutWarehouseTime != ''">
@@ -78,7 +78,7 @@
     <select id="selectWarehouseOutReceiptByWarehouseOutReceiptId" parameterType="Long"
             resultMap="WarehouseOutReceiptResult">
         <include refid="selectWarehouseOutReceiptVo"/>
-        where del_flag =0 and warehouse_out_receipt_id = #{warehouseOutReceiptId}
+        where del_flag ='0' and warehouse_out_receipt_id = #{warehouseOutReceiptId}
     </select>
 
     <select id="getOutReceiptScanList" parameterType="WarehouseOutReceipt" resultType="WarehouseOutReceiptVo">
@@ -91,7 +91,7 @@
                b.warehouse_name
         FROM warehouse_out_receipt a
                  LEFT JOIN warehouse b ON a.warehouse_id = b.warehouse_id
-        where a.del_flag = 0
+        where a.del_flag = '0'
           and a.state = #{state}
         <!-- 数据范围过滤 -->
         ${params.warehouseScope}
@@ -108,7 +108,7 @@
                b.warehouse_name
         FROM warehouse_out_receipt a
                  LEFT JOIN warehouse b ON a.warehouse_id = b.warehouse_id
-        where a.del_flag = 0
+        where a.del_flag = '0'
           and a.warehouse_out_receipt_id = #{receiptId}
     </select>
 
@@ -182,12 +182,12 @@
 
     <update id="deleteWarehouseOutReceiptByWarehouseOutReceiptId" parameterType="Long">
         update warehouse_out_receipt
-        set del_flag = 1
+        set del_flag = '1'
         where warehouse_out_receipt_id = #{warehouseOutReceiptId}
     </update>
 
     <update id="deleteWarehouseOutReceiptByWarehouseOutReceiptIds" parameterType="String">
-        update warehouse_out_receipt set del_flag = 1 where warehouse_out_receipt_id in
+        update warehouse_out_receipt set del_flag = '1' where warehouse_out_receipt_id in
         <foreach item="warehouseOutReceiptId" collection="array" open="(" separator="," close=")">
             #{warehouseOutReceiptId}
         </foreach>

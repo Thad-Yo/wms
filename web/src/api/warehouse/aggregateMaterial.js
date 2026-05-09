@@ -15,6 +15,13 @@ export function getAggregateMaterial(materialId) {
   })
 }
 
+export function getNextAggregateMaterialBatchNo() {
+  return request({
+    url: '/warehouse/aggregate/material/nextBatchNo',
+    method: 'get'
+  })
+}
+
 export function addAggregateMaterial(data) {
   return request({
     url: '/warehouse/aggregate/material',
@@ -35,6 +42,14 @@ export function updateAggregateMaterial(data) {
   return request({
     url: '/warehouse/aggregate/material',
     method: 'put',
+    data: data
+  })
+}
+
+export function approveAggregateMaterial(data) {
+  return request({
+    url: '/warehouse/aggregate/material/approve',
+    method: 'post',
     data: data
   })
 }

@@ -4,11 +4,11 @@
       <el-col :span="8" :xs="24">
         <el-card shadow="never">
           <div slot="header">
-            <span>RFID事件采集</span>
+            <span>骨料事件采集</span>
           </div>
           <el-form ref="form" :model="form" :rules="rules" label-width="100px">
             <el-form-item label="RFID" prop="rfidCode">
-              <el-input v-model="form.rfidCode" placeholder="请输入或扫描RFID/EPC编码" clearable />
+              <el-input v-model="form.rfidCode" placeholder="请输入或扫描骨料标签 RFID/EPC 编码" clearable />
             </el-form-item>
             <el-form-item label="事件类型" prop="eventType">
               <el-select v-model="form.eventType" placeholder="请选择事件类型" style="width: 100%" @change="eventTypeChange">
@@ -36,7 +36,7 @@
               <el-input v-model="form.locationName" placeholder="请输入采集地点" />
             </el-form-item>
             <el-form-item label="操作行为" prop="actionName">
-              <el-input v-model="form.actionName" placeholder="如手持入库、装车出库、库区移动" />
+              <el-input v-model="form.actionName" placeholder="如骨料入库、骨料出库、骨料流转" />
             </el-form-item>
             <el-form-item label="重量(吨)" prop="weight">
               <el-input-number v-model="form.weight" :precision="3" :step="1" :min="0" style="width: 100%" />
@@ -74,6 +74,7 @@
           <el-form-item label="事件类型" prop="eventType">
             <el-select v-model="queryParams.eventType" placeholder="事件类型" clearable>
               <el-option label="建档" value="CREATED" />
+              <el-option label="绑定骨料" value="BIND_OBJECT" />
               <el-option label="入库" value="INBOUND" />
               <el-option label="出库" value="OUTBOUND" />
               <el-option label="移动" value="TRANSFER" />
@@ -191,7 +192,7 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (!valid) return;
         addAggregateEvent(this.form).then(() => {
-          this.$modal.msgSuccess("事件采集成功");
+          this.$modal.msgSuccess("骨料事件采集成功");
           this.queryParams.rfidCode = this.form.rfidCode;
           this.getList();
         });
@@ -206,10 +207,11 @@ export default {
       this.handleQuery();
     },
     eventLabel(value) {
-      const map = { CREATED: "建档", INBOUND: "入库", OUTBOUND: "出库", TRANSFER: "移动" };
+      const map = { CREATED: "建档", BIND_OBJECT: "绑定骨料", BIND_GOODS: "绑定骨料", INBOUND: "入库", OUTBOUND: "出库", TRANSFER: "移动" };
       return map[value] || value;
     },
     eventTagType(value) {
+      if (value === "BIND_OBJECT" || value === "BIND_GOODS") return "warning";
       if (value === "INBOUND") return "success";
       if (value === "OUTBOUND") return "info";
       if (value === "TRANSFER") return "warning";

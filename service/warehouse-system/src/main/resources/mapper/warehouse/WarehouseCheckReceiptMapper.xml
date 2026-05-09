@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseCheckReceiptList" parameterType="WarehouseCheckReceipt" resultMap="WarehouseCheckReceiptResult">
         <include refid="selectWarehouseCheckReceiptVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="checkUserId != null "> and check_user_id = #{checkUserId}</if>
             <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
             <if test="documentNumber != null  and documentNumber != ''"> and document_number = #{documentNumber}</if>
@@ -38,29 +38,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWarehouseCheckReceiptByCheckReceiptId" parameterType="Long" resultMap="WarehouseCheckReceiptResult">
         <include refid="selectWarehouseCheckReceiptVo"/>
-        where del_flag =0 and check_receipt_id = #{checkReceiptId}
+        where del_flag ='0' and check_receipt_id = #{checkReceiptId}
     </select>
     <select id="selectWarehouseCheckReceiptDtoList" parameterType="WarehouseCheckReceipt" resultType="WarehouseCheckReceiptDto">
         SELECT
-            a.`check_receipt_id`,
-            a.`check_user_id`,
-            a.`warehouse_id`,
-            a.`document_number`,
-            a.`state`,
-            a.`check_time`,
-            a.`del_flag`,
-            a.`create_by`,
-            a.`create_time`,
-            a.`update_by`,
-            a.`update_time`,
-            a.`remark`,
+            a."check_receipt_id",
+            a."check_user_id",
+            a."warehouse_id",
+            a."document_number",
+            a."state",
+            a."check_time",
+            a."del_flag",
+            a."create_by",
+            a."create_time",
+            a."update_by",
+            a."update_time",
+            a."remark",
             b.warehouse_name,
             c.nick_name checkUserName
         FROM
             warehouse_check_receipt a
                 LEFT JOIN warehouse b ON a.warehouse_id = b.warehouse_id
                 LEFT JOIN sys_user c ON c.user_id = a.check_user_id
-        where a.del_flag = 0
+        where a.del_flag = '0'
         <if test="warehouseId != null "> and a.warehouse_id = #{warehouseId}</if>
         <if test="documentNumber != null  and documentNumber != ''"> and a.document_number = #{documentNumber}</if>
         <if test="params.beginCheckTime != null and params.beginCheckTime != '' and params.endCheckTime != null and params.endCheckTime != ''">
@@ -117,11 +117,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseCheckReceiptByCheckReceiptId" parameterType="Long">
-        update  warehouse_check_receipt set del_flag = 1 where check_receipt_id = #{checkReceiptId}
+        update  warehouse_check_receipt set del_flag = '1' where check_receipt_id = #{checkReceiptId}
     </update>
 
     <update id="deleteWarehouseCheckReceiptByCheckReceiptIds" parameterType="String">
-        update  warehouse_check_receipt set del_flag = 1 where check_receipt_id in
+        update  warehouse_check_receipt set del_flag = '1' where check_receipt_id in
         <foreach item="checkReceiptId" collection="array" open="(" separator="," close=")">
             #{checkReceiptId}
         </foreach>

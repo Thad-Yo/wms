@@ -22,7 +22,7 @@
     <select id="selectWarehouseStockList" parameterType="WarehouseStock" resultMap="WarehouseStockResult">
         <include refid="selectWarehouseStockVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="warehouseId != null ">and warehouse_id = #{warehouseId}</if>
             <if test="goodsId != null ">and goods_id = #{goodsId}</if>
             <if test="stockNumber != null ">and stock_number = #{stockNumber}</if>
@@ -34,7 +34,7 @@
 
     <select id="selectWarehouseStockByStockId" parameterType="Long" resultMap="WarehouseStockResult">
         <include refid="selectWarehouseStockVo"/>
-        where del_flag =0 and stock_id = #{stockId}
+        where del_flag ='0' and stock_id = #{stockId}
     </select>
     <select id="selectWarehouseStockSummaryList" parameterType="WarehouseStockReportQueryDto"
             resultType="WarehouseStock">
@@ -111,12 +111,12 @@
 
     <update id="deleteWarehouseStockByStockId" parameterType="Long">
         update warehouse_stock
-        set del_flag = 1
+        set del_flag = '1'
         where stock_id = #{stockId}
     </update>
 
     <update id="deleteWarehouseStockByStockIds" parameterType="String">
-        update warehouse_stock set del_flag = 1 where stock_id in
+        update warehouse_stock set del_flag = '1' where stock_id in
         <foreach item="stockId" collection="array" open="(" separator="," close=")">
             #{stockId}
         </foreach>

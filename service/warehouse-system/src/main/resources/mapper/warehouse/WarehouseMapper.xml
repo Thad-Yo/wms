@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseList" parameterType="Warehouse" resultMap="WarehouseResult">
         <include refid="selectWarehouseVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="warehouseCode != null  and warehouseCode != ''"> and warehouse_code = #{warehouseCode}</if>
             <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
             <if test="warehouseAddress != null  and warehouseAddress != ''"> and warehouse_address = #{warehouseAddress}</if>
@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWarehouseByWarehouseId" parameterType="Long" resultMap="WarehouseResult">
         <include refid="selectWarehouseVo"/>
-        where del_flag =0 and warehouse_id = #{warehouseId}
+        where del_flag ='0' and warehouse_id = #{warehouseId}
     </select>
         
     <insert id="insertWarehouse" parameterType="Warehouse" useGeneratedKeys="true" keyProperty="warehouseId">
@@ -86,11 +86,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseByWarehouseId" parameterType="Long">
-        update  warehouse set del_flag = 1 where warehouse_id = #{warehouseId}
+        update  warehouse set del_flag = '1' where warehouse_id = #{warehouseId}
     </update>
 
     <update id="deleteWarehouseByWarehouseIds" parameterType="String">
-        update  warehouse set del_flag = 1 where warehouse_id in
+        update  warehouse set del_flag = '1' where warehouse_id in
         <foreach item="warehouseId" collection="array" open="(" separator="," close=")">
             #{warehouseId}
         </foreach>

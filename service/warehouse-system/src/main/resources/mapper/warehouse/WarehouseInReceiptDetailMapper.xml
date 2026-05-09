@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseInReceiptDetailList" parameterType="WarehouseInReceiptDetail" resultMap="WarehouseInReceiptDetailResult">
         <include refid="selectWarehouseInReceiptDetailVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="inReceiptId != null "> and in_receipt_id = #{inReceiptId}</if>
             <if test="goodsId != null "> and goods_id = #{goodsId}</if>
             <if test="goodsPrice != null "> and goods_price = #{goodsPrice}</if>
@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWarehouseInReceiptDetailByInReceiptDetailId" parameterType="Long" resultMap="WarehouseInReceiptDetailResult">
         <include refid="selectWarehouseInReceiptDetailVo"/>
-        where del_flag =0 and in_receipt_detail_id = #{inReceiptDetailId}
+        where del_flag ='0' and in_receipt_detail_id = #{inReceiptDetailId}
     </select>
         
     <insert id="insertWarehouseInReceiptDetail" parameterType="WarehouseInReceiptDetail" useGeneratedKeys="true" keyProperty="inReceiptDetailId">
@@ -65,11 +65,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseInReceiptDetailByInReceiptDetailId" parameterType="Long">
-        update  warehouse_in_receipt_detail set del_flag = 1 where in_receipt_detail_id = #{inReceiptDetailId}
+        update  warehouse_in_receipt_detail set del_flag = '1' where in_receipt_detail_id = #{inReceiptDetailId}
     </update>
 
     <update id="deleteWarehouseInReceiptDetailByInReceiptDetailIds" parameterType="String">
-        update  warehouse_in_receipt_detail set del_flag = 1 where in_receipt_detail_id in
+        update  warehouse_in_receipt_detail set del_flag = '1' where in_receipt_detail_id in
         <foreach item="inReceiptDetailId" collection="array" open="(" separator="," close=")">
             #{inReceiptDetailId}
         </foreach>
@@ -77,23 +77,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getInReceiptGoodsList" parameterType="Long" resultType="WarehouseGoodsDto">
         SELECT
-            a.`goods_id`,
-            a.`category_id`,
-            a.`category_code`,
-            a.`goods_code`,
-            a.`goods_name`,
-            a.`area`,
-            a.`specification_type`,
-            a.`unit_type`,
-            a.`color_type`,
-            a.`min_stock`,
-            a.`max_stock`,
-            a.`goods_picture`,
-            a.`expiration_date`,
-            a.`expiration_date_type`,
-            a.`warranty_date`,
-            a.`warranty_date_type`,
-            a.`sn_validate`,
+            a."goods_id",
+            a."category_id",
+            a."category_code",
+            a."goods_code",
+            a."goods_name",
+            a."area",
+            a."specification_type",
+            a."unit_type",
+            a."color_type",
+            a."min_stock",
+            a."max_stock",
+            a."goods_picture",
+            a."expiration_date",
+            a."expiration_date_type",
+            a."warranty_date",
+            a."warranty_date_type",
+            a."sn_validate",
             b.goods_amount,
             b.goods_number,
             b.goods_price,
@@ -108,11 +108,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getInReceiptGoodsListWithSnCode" parameterType="Long" resultType="WarehouseGoodsVo">
         SELECT
             distinct
-            a.`goods_id`,
-            a.`goods_name`,
-            a.`specification_type`,
-            a.`goods_picture`,
-            a.`sn_validate`,
+            a."goods_id",
+            a."goods_name",
+            a."specification_type",
+            a."goods_picture",
+            a."sn_validate",
             e.category_name,
             e.category_code,
             d.sn_code

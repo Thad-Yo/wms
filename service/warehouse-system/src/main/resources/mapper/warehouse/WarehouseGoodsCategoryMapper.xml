@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseGoodsCategoryList" parameterType="WarehouseGoodsCategory" resultMap="WarehouseGoodsCategoryResult">
         <include refid="selectWarehouseGoodsCategoryVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="categoryCode != null  and categoryCode != ''"> and category_code = #{categoryCode}</if>
             <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
         </where>
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWarehouseGoodsCategoryByCategoryId" parameterType="Long" resultMap="WarehouseGoodsCategoryResult">
         <include refid="selectWarehouseGoodsCategoryVo"/>
-        where del_flag =0 and category_id = #{categoryId}
+        where del_flag ='0' and category_id = #{categoryId}
     </select>
         
     <insert id="insertWarehouseGoodsCategory" parameterType="WarehouseGoodsCategory" useGeneratedKeys="true" keyProperty="categoryId">
@@ -90,11 +90,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseGoodsCategoryByCategoryId" parameterType="Long">
-        update  warehouse_goods_category set del_flag = 1 where category_id = #{categoryId}
+        update  warehouse_goods_category set del_flag = '1' where category_id = #{categoryId}
     </update>
 
     <update id="deleteWarehouseGoodsCategoryByCategoryIds" parameterType="String">
-        update  warehouse_goods_category set del_flag = 1 where category_id in
+        update  warehouse_goods_category set del_flag = '1' where category_id in
         <foreach item="categoryId" collection="array" open="(" separator="," close=")">
             #{categoryId}
         </foreach>

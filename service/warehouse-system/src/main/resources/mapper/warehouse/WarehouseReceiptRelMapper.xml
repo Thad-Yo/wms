@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseReceiptRelList" parameterType="WarehouseReceiptRel" resultMap="WarehouseReceiptRelResult">
         <include refid="selectWarehouseReceiptRelVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="transferId != null "> and transfer_id = #{transferId}</if>
             <if test="transferDocumentNumber != null  and transferDocumentNumber != ''"> and transfer_document_number = #{transferDocumentNumber}</if>
             <if test="inId != null "> and in_id = #{inId}</if>
@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWarehouseReceiptRelByRelId" parameterType="Long" resultMap="WarehouseReceiptRelResult">
         <include refid="selectWarehouseReceiptRelVo"/>
-        where del_flag =0 and rel_id = #{relId}
+        where del_flag ='0' and rel_id = #{relId}
     </select>
         
     <insert id="insertWarehouseReceiptRel" parameterType="WarehouseReceiptRel" useGeneratedKeys="true" keyProperty="relId">
@@ -70,11 +70,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseReceiptRelByRelId" parameterType="Long">
-        update  warehouse_receipt_rel set del_flag = 1 where rel_id = #{relId}
+        update  warehouse_receipt_rel set del_flag = '1' where rel_id = #{relId}
     </update>
 
     <update id="deleteWarehouseReceiptRelByRelIds" parameterType="String">
-        update  warehouse_receipt_rel set del_flag = 1 where rel_id in
+        update  warehouse_receipt_rel set del_flag = '1' where rel_id in
         <foreach item="relId" collection="array" open="(" separator="," close=")">
             #{relId}
         </foreach>

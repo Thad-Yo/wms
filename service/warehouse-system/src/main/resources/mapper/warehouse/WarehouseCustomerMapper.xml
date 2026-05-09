@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseCustomerList" parameterType="WarehouseCustomer" resultMap="WarehouseCustomerResult">
         <include refid="selectWarehouseCustomerVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
             <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
             <if test="customerType != null  and customerType != ''"> and customer_type = #{customerType}</if>
@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWarehouseCustomerByCustomerId" parameterType="Long" resultMap="WarehouseCustomerResult">
         <include refid="selectWarehouseCustomerVo"/>
-        where del_flag =0 and customer_id = #{customerId}
+        where del_flag ='0' and customer_id = #{customerId}
     </select>
         
     <insert id="insertWarehouseCustomer" parameterType="WarehouseCustomer" useGeneratedKeys="true" keyProperty="customerId">
@@ -79,11 +79,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseCustomerByCustomerId" parameterType="Long">
-        update  warehouse_customer set del_flag = 1 where customer_id = #{customerId}
+        update  warehouse_customer set del_flag = '1' where customer_id = #{customerId}
     </update>
 
     <update id="deleteWarehouseCustomerByCustomerIds" parameterType="String">
-        update  warehouse_customer set del_flag = 1 where customer_id in
+        update  warehouse_customer set del_flag = '1' where customer_id in
         <foreach item="customerId" collection="array" open="(" separator="," close=")">
             #{customerId}
         </foreach>

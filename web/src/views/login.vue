@@ -7,7 +7,7 @@
         <el-form ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on" style="width: 100%">
           <div class="huanyin-title">
             <span>您好！</span>
-            <span>欢迎登录仓储云SAAS管理平台</span>
+            <span>欢迎登录骨料云管理平台</span>
             <input v-model="loginForm.username" class="login1 inp_bg1" type="text" name="name5" id="name5" value="" placeholder="请输入用户名" />
             <input v-model="loginForm.password" class="login1 inp_bg2" type="password" name="pwd5" id="pwd5" value="" placeholder="请输入密码" />
             <div class="code-container">

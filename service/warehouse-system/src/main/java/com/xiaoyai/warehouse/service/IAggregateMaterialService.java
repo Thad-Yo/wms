@@ -16,4 +16,8 @@ public interface IAggregateMaterialService extends IService<AggregateMaterial> {
     int updateAggregateMaterial(AggregateMaterial aggregateMaterial);
 
     int deleteAggregateMaterialByIds(Long[] materialIds);
+
+    String previewNextBatchNo();
+
+    int approveAggregateMaterial(AggregateMaterial aggregateMaterial);
 }

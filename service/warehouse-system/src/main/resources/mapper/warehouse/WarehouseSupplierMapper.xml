@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseSupplierList" parameterType="WarehouseSupplier" resultMap="WarehouseSupplierResult">
         <include refid="selectWarehouseSupplierVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="address != null  and address != ''"> and address = #{address}</if>
             <if test="contacts != null  and contacts != ''"> and contacts = #{contacts}</if>
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWarehouseSupplierBySupplierId" parameterType="Long" resultMap="WarehouseSupplierResult">
         <include refid="selectWarehouseSupplierVo"/>
-        where del_flag =0 and supplier_id = #{supplierId}
+        where del_flag ='0' and supplier_id = #{supplierId}
     </select>
         
     <insert id="insertWarehouseSupplier" parameterType="WarehouseSupplier" useGeneratedKeys="true" keyProperty="supplierId">
@@ -84,11 +84,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseSupplierBySupplierId" parameterType="Long">
-        update  warehouse_supplier set del_flag = 1 where supplier_id = #{supplierId}
+        update  warehouse_supplier set del_flag = '1' where supplier_id = #{supplierId}
     </update>
 
     <update id="deleteWarehouseSupplierBySupplierIds" parameterType="String">
-        update  warehouse_supplier set del_flag = 1 where supplier_id in
+        update  warehouse_supplier set del_flag = '1' where supplier_id in
         <foreach item="supplierId" collection="array" open="(" separator="," close=")">
             #{supplierId}
         </foreach>

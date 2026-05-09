@@ -8,10 +8,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="identityId" column="identity_id"/>
         <result property="rfidCode" column="rfid_code"/>
         <result property="materialId" column="material_id"/>
+        <result property="objectId" column="object_id"/>
         <result property="eventType" column="event_type"/>
         <result property="eventName" column="event_name"/>
         <result property="eventTime" column="event_time"/>
         <result property="locationName" column="location_name"/>
+        <result property="sourceModule" column="source_module"/>
         <result property="longitude" column="longitude"/>
         <result property="latitude" column="latitude"/>
         <result property="operatorId" column="operator_id"/>
@@ -32,18 +34,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sourceReceiptId" column="source_receipt_id"/>
         <result property="sourceReceiptNo" column="source_receipt_no"/>
         <result property="rawPayload" column="raw_payload"/>
+        <result property="snapshotData" column="snapshot_data"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="remark" column="remark"/>
     </resultMap>
 
     <select id="selectAggregateEventList" parameterType="AggregateEvent" resultMap="AggregateEventResult">
-        select event_id, identity_id, rfid_code, material_id, event_type, event_name, event_time,
-               location_name, longitude, latitude, operator_id, operator_name, action_name,
+        select event_id, identity_id, rfid_code, material_id, object_id, event_type, event_name, event_time,
+               location_name, source_module, longitude, latitude, operator_id, operator_name, action_name,
                device_id, device_code, device_type, warehouse_id, warehouse_name,
                from_warehouse_id, from_warehouse_name, to_warehouse_id, to_warehouse_name,
                weight, vehicle_no, source_receipt_type, source_receipt_id, source_receipt_no,
-               raw_payload, create_by, create_time, remark
+               raw_payload, snapshot_data, create_by, create_time, remark
         from aggregate_event
         <where>
             <if test="identityId != null">and identity_id = #{identityId}</if>

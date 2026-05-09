@@ -1,7 +1,7 @@
 package com.xiaoyai.warehouse.enums;
 
 /**
- * 数字骨料RFID身份状态
+ * 骨料RFID身份状态
  */
 public enum AggregateIdentityState {
     CREATED("CREATED", "已建档"),

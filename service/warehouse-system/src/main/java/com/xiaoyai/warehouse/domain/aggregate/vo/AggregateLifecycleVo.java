@@ -2,6 +2,7 @@ package com.xiaoyai.warehouse.domain.aggregate.vo;
 
 import com.xiaoyai.warehouse.domain.aggregate.AggregateEvent;
 import com.xiaoyai.warehouse.domain.aggregate.AggregateRfidIdentity;
+import com.xiaoyai.warehouse.domain.aggregate.AggregateSubjectBindRecord;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
 public class AggregateLifecycleVo {
     private AggregateRfidIdentity identity;
     private List<AggregateEvent> events;
+    private List<AggregateSubjectBindRecord> bindRecords;
 
     public AggregateRfidIdentity getIdentity() {
         return identity;
@@ -26,5 +28,13 @@ public class AggregateLifecycleVo {
 
     public void setEvents(List<AggregateEvent> events) {
         this.events = events;
+    }
+
+    public List<AggregateSubjectBindRecord> getBindRecords() {
+        return bindRecords;
+    }
+
+    public void setBindRecords(List<AggregateSubjectBindRecord> bindRecords) {
+        this.bindRecords = bindRecords;
     }
 }

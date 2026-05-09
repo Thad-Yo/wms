@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWarehouseTransferReceiptDetailList" parameterType="WarehouseTransferReceiptDetail" resultMap="WarehouseTransferReceiptDetailResult">
         <include refid="selectWarehouseTransferReceiptDetailVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="transferReceiptId != null "> and transfer_receipt_id = #{transferReceiptId}</if>
             <if test="goodsId != null "> and goods_id = #{goodsId}</if>
             <if test="goodsPrice != null "> and goods_price = #{goodsPrice}</if>
@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWarehouseTransferReceiptDetailByTransferReceiptDetailId" parameterType="Long" resultMap="WarehouseTransferReceiptDetailResult">
         <include refid="selectWarehouseTransferReceiptDetailVo"/>
-        where del_flag =0 and transfer_receipt_detail_id = #{transferReceiptDetailId}
+        where del_flag ='0' and transfer_receipt_detail_id = #{transferReceiptDetailId}
     </select>
         
     <insert id="insertWarehouseTransferReceiptDetail" parameterType="WarehouseTransferReceiptDetail" useGeneratedKeys="true" keyProperty="transferReceiptDetailId">
@@ -70,35 +70,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWarehouseTransferReceiptDetailByTransferReceiptDetailId" parameterType="Long">
-        update  warehouse_transfer_receipt_detail set del_flag = 1 where transfer_receipt_detail_id = #{transferReceiptDetailId}
+        update  warehouse_transfer_receipt_detail set del_flag = '1' where transfer_receipt_detail_id = #{transferReceiptDetailId}
     </update>
 
     <update id="deleteWarehouseTransferReceiptDetailByTransferReceiptDetailIds" parameterType="String">
-        update  warehouse_transfer_receipt_detail set del_flag = 1 where transfer_receipt_detail_id in
+        update  warehouse_transfer_receipt_detail set del_flag = '1' where transfer_receipt_detail_id in
         <foreach item="transferReceiptDetailId" collection="array" open="(" separator="," close=")">
             #{transferReceiptDetailId}
         </foreach>
     </update>
     <select id="getTransferReceiptGoodsList" parameterType="Long" resultType="WarehouseGoodsDto">
         SELECT
-            a.`goods_id`,
-            a.`category_id`,
-            a.`category_code`,
-            a.`goods_code`,
-            a.`goods_name`,
-            a.`area`,
-            a.`specification_type`,
-            a.`unit_type`,
-            a.`color_type`,
-            a.`min_stock`,
-            a.`max_stock`,
-            a.`goods_picture`,
-            a.`expiration_date`,
-            a.`expiration_date_type`,
-            a.`warranty_date`,
-            a.`warranty_date_type`,
-            a.`sn_validate`,
-            c.`category_name`,
+            a."goods_id",
+            a."category_id",
+            a."category_code",
+            a."goods_code",
+            a."goods_name",
+            a."area",
+            a."specification_type",
+            a."unit_type",
+            a."color_type",
+            a."min_stock",
+            a."max_stock",
+            a."goods_picture",
+            a."expiration_date",
+            a."expiration_date_type",
+            a."warranty_date",
+            a."warranty_date_type",
+            a."sn_validate",
+            c."category_name",
             b.goods_amount,
             b.goods_number,
             b.goods_price,
@@ -112,24 +112,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getTransferReceiptGoodsWithSnCodeList" parameterType="WarehouseTransferReceiptDto" resultType="WarehouseGoodsDto">
         SELECT
-            a.`goods_id`,
-            a.`category_id`,
-            a.`category_code`,
-            a.`goods_code`,
-            a.`goods_name`,
-            a.`area`,
-            a.`specification_type`,
-            a.`unit_type`,
-            a.`color_type`,
-            a.`min_stock`,
-            a.`max_stock`,
-            a.`goods_picture`,
-            a.`expiration_date`,
-            a.`expiration_date_type`,
-            a.`warranty_date`,
-            a.`warranty_date_type`,
-            a.`sn_validate`,
-            e.`category_name`,
+            a."goods_id",
+            a."category_id",
+            a."category_code",
+            a."goods_code",
+            a."goods_name",
+            a."area",
+            a."specification_type",
+            a."unit_type",
+            a."color_type",
+            a."min_stock",
+            a."max_stock",
+            a."goods_picture",
+            a."expiration_date",
+            a."expiration_date_type",
+            a."warranty_date",
+            a."warranty_date_type",
+            a."sn_validate",
+            e."category_name",
             b.goods_amount,
             b.goods_number,
             b.goods_price,

@@ -53,7 +53,7 @@
         LEFT JOIN warehouse b on a.transfer_out_warehouse_id = b.warehouse_id
         LEFT JOIN warehouse c on a.transfer_in_warehouse_id = c.warehouse_id
         LEFT JOIN warehouse_receipt_rel d on d.transfer_id = a.warehouse_transfer_receipt_id
-        where a.del_flag = 0
+        where a.del_flag = '0'
         <if test="transferOutWarehouseId != null ">and transfer_out_warehouse_id = #{transferOutWarehouseId}</if>
         <if test="transferInWarehouseId != null ">and transfer_in_warehouse_id = #{transferInWarehouseId}</if>
         <if test="documentNumber != null  and documentNumber != ''">and document_number = #{documentNumber}</if>
@@ -131,12 +131,12 @@
 
     <update id="deleteWarehouseTransferReceiptByWarehouseTransferReceiptId" parameterType="Long">
         update warehouse_transfer_receipt
-        set del_flag = 1
+        set del_flag = '1'
         where warehouse_transfer_receipt_id = #{warehouseTransferReceiptId}
     </update>
 
     <update id="deleteWarehouseTransferReceiptByWarehouseTransferReceiptIds" parameterType="String">
-        update warehouse_transfer_receipt set del_flag = 1 where warehouse_transfer_receipt_id in
+        update warehouse_transfer_receipt set del_flag = '1' where warehouse_transfer_receipt_id in
         <foreach item="warehouseTransferReceiptId" collection="array" open="(" separator="," close=")">
             #{warehouseTransferReceiptId}
         </foreach>

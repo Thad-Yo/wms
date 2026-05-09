@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSysDeptJobTitleList" parameterType="SysDeptJobTitle" resultMap="SysDeptJobTitleResult">
         <include refid="selectSysDeptJobTitleVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="jobTitleCode != null  and jobTitleCode != ''"> and job_title_code = #{jobTitleCode}</if>
         </where>
@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectSysDeptJobTitleByDeptId" parameterType="Long" resultMap="SysDeptJobTitleResult">
         <include refid="selectSysDeptJobTitleVo"/>
-        where del_flag =0 and dept_id = #{deptId}
+        where del_flag ='0' and dept_id = #{deptId}
     </select>
         
     <insert id="insertSysDeptJobTitle" parameterType="SysDeptJobTitle">
@@ -52,11 +52,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteSysDeptJobTitleByDeptId" parameterType="Long">
-        update  sys_dept_job_title set del_flag = 1 where dept_id = #{deptId}
+        update  sys_dept_job_title set del_flag = '1' where dept_id = #{deptId}
     </update>
 
     <update id="deleteSysDeptJobTitleByDeptIds" parameterType="String">
-        update  sys_dept_job_title set del_flag = 1 where dept_id in
+        update  sys_dept_job_title set del_flag = '1' where dept_id in
         <foreach item="deptId" collection="array" open="(" separator="," close=")">
             #{deptId}
         </foreach>

@@ -24,10 +24,10 @@
             <optional>true</optional> <!-- 表示依赖不会传递 -->
         </dependency>
 
-         <!-- Mysql驱动包 -->
+         <!-- PostgreSQL驱动包 -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
 
         <!-- 核心模块-->

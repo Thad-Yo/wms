@@ -33,7 +33,7 @@
             resultMap="WarehouseGoodsTraceResult">
         <include refid="selectWarehouseGoodsTraceVo"/>
         <where>
-            and del_flag = 0
+            and del_flag = '0'
             <if test="goodsId != null ">and goods_id = #{goodsId}</if>
             <if test="snCode != null  and snCode != ''">and sn_code = #{snCode}</if>
         </where>
@@ -41,7 +41,7 @@
 
     <select id="selectWarehouseGoodsTraceByTraceId" parameterType="Long" resultMap="WarehouseGoodsTraceResult">
         <include refid="selectWarehouseGoodsTraceVo"/>
-        where del_flag =0 and trace_id = #{traceId}
+        where del_flag ='0' and trace_id = #{traceId}
     </select>
 
     <insert id="insertWarehouseGoodsTrace" parameterType="WarehouseGoodsTrace" useGeneratedKeys="true"
@@ -86,28 +86,28 @@
 
     <update id="deleteWarehouseGoodsTraceByTraceId" parameterType="Long">
         update warehouse_goods_trace
-        set del_flag = 1
+        set del_flag = '1'
         where trace_id = #{traceId}
     </update>
 
     <update id="deleteWarehouseGoodsTraceByTraceIds" parameterType="String">
-        update warehouse_goods_trace set del_flag = 1 where trace_id in
+        update warehouse_goods_trace set del_flag = '1' where trace_id in
         <foreach item="traceId" collection="array" open="(" separator="," close=")">
             #{traceId}
         </foreach>
     </update>
     <select id="selectWarehouseGoodsTraceDtoList" parameterType="WarehouseGoodsTrace"
             resultType="WarehouseGoodsTraceDto">
-        SELECT a.`trace_id`,
-               a.`goods_id`,
-               a.`sn_code`,
-               a.`in_receipt_id`,
-               a.`del_flag`,
-               a.`create_by`,
-               a.`create_time`,
-               a.`update_by`,
-               a.`update_time`,
-               a.`remark`,
+        SELECT a."trace_id",
+               a."goods_id",
+               a."sn_code",
+               a."in_receipt_id",
+               a."del_flag",
+               a."create_by",
+               a."create_time",
+               a."update_by",
+               a."update_time",
+               a."remark",
                b.goods_name,
                c.category_name
         FROM warehouse_goods_trace a
@@ -123,13 +123,13 @@
         a.trace_id,
         a.trace_state,
         a.sn_code,
-        b.`goods_code`,
-        b.`goods_name`,
-        b.`area`,
-        b.`specification_type`,
-        b.`unit_type`,
-        b.`color_type`,
-        b.`goods_picture`,
+        b."goods_code",
+        b."goods_name",
+        b."area",
+        b."specification_type",
+        b."unit_type",
+        b."color_type",
+        b."goods_picture",
         c.category_name
         FROM
         warehouse_goods_trace a

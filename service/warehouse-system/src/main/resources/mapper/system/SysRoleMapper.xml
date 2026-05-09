@@ -110,10 +110,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="roleId != null and roleId != 0">#{roleId},</if>
  			<if test="roleName != null and roleName != ''">#{roleName},</if>
  			<if test="roleKey != null and roleKey != ''">#{roleKey},</if>
- 			<if test="roleSort != null and roleSort != ''">#{roleSort},</if>
+ 			<if test="roleSort != null and roleSort != ''">CAST(#{roleSort} AS integer),</if>
  			<if test="dataScope != null and dataScope != ''">#{dataScope},</if>
- 			<if test="menuCheckStrictly != null">#{menuCheckStrictly},</if>
- 			<if test="deptCheckStrictly != null">#{deptCheckStrictly},</if>
+ 			<if test="menuCheckStrictly != null">CAST(#{menuCheckStrictly} AS smallint),</if>
+ 			<if test="deptCheckStrictly != null">CAST(#{deptCheckStrictly} AS smallint),</if>
  			<if test="status != null and status != ''">#{status},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
@@ -126,10 +126,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  		<set>
  			<if test="roleName != null and roleName != ''">role_name = #{roleName},</if>
  			<if test="roleKey != null and roleKey != ''">role_key = #{roleKey},</if>
- 			<if test="roleSort != null and roleSort != ''">role_sort = #{roleSort},</if>
+ 			<if test="roleSort != null and roleSort != ''">role_sort = CAST(#{roleSort} AS integer),</if>
  			<if test="dataScope != null and dataScope != ''">data_scope = #{dataScope},</if>
- 			<if test="menuCheckStrictly != null">menu_check_strictly = #{menuCheckStrictly},</if>
- 			<if test="deptCheckStrictly != null">dept_check_strictly = #{deptCheckStrictly},</if>
+ 			<if test="menuCheckStrictly != null">menu_check_strictly = CAST(#{menuCheckStrictly} AS smallint),</if>
+ 			<if test="deptCheckStrictly != null">dept_check_strictly = CAST(#{deptCheckStrictly} AS smallint),</if>
  			<if test="status != null and status != ''">status = #{status},</if>
  			<if test="remark != null">remark = #{remark},</if>
  			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>

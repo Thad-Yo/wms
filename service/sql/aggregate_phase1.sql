@@ -1,12 +1,12 @@
--- 数字骨料管理平台第一阶段增量脚本
--- RFID身份建档 -> 入库事件 -> 出库事件 -> 移动事件 -> 时间线查询
+-- 可信对象平台第一阶段增量脚本
+-- 标签建档 -> 入库事件 -> 出库事件 -> 移动事件 -> 时间线查询
 
 DROP TABLE IF EXISTS `aggregate_material`;
 CREATE TABLE `aggregate_material` (
-  `material_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '骨料档案ID',
-  `material_code` varchar(64) NOT NULL COMMENT '骨料编号',
-  `material_name` varchar(128) NOT NULL COMMENT '骨料名称',
-  `material_type` varchar(64) DEFAULT NULL COMMENT '骨料类型',
+  `material_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对象档案ID',
+  `material_code` varchar(64) NOT NULL COMMENT '对象编号',
+  `material_name` varchar(128) NOT NULL COMMENT '对象名称',
+  `material_type` varchar(64) DEFAULT NULL COMMENT '对象类型',
   `specification` varchar(128) DEFAULT NULL COMMENT '规格/粒径',
   `origin_place` varchar(255) DEFAULT NULL COMMENT '产地',
   `batch_no` varchar(64) DEFAULT NULL COMMENT '批次号',
@@ -26,16 +26,16 @@ CREATE TABLE `aggregate_material` (
   PRIMARY KEY (`material_id`),
   KEY `idx_aggregate_material_code` (`material_code`),
   KEY `idx_aggregate_material_batch` (`batch_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数字骨料基础档案';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='可信对象基础档案';
 
 DROP TABLE IF EXISTS `aggregate_rfid_identity`;
 CREATE TABLE `aggregate_rfid_identity` (
-  `identity_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'RFID身份ID',
+  `identity_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '标签身份ID',
   `rfid_code` varchar(128) NOT NULL COMMENT 'RFID/EPC编码',
   `tid_code` varchar(128) DEFAULT NULL COMMENT 'TID编码',
-  `material_id` bigint(20) NOT NULL COMMENT '骨料档案ID',
-  `material_code` varchar(64) DEFAULT NULL COMMENT '骨料编号',
-  `material_name` varchar(128) DEFAULT NULL COMMENT '骨料名称',
+  `material_id` bigint(20) NOT NULL COMMENT '对象档案ID',
+  `material_code` varchar(64) DEFAULT NULL COMMENT '对象编号',
+  `material_name` varchar(128) DEFAULT NULL COMMENT '对象名称',
   `batch_no` varchar(64) DEFAULT NULL COMMENT '批次号',
   `identity_level` varchar(32) DEFAULT 'BATCH' COMMENT '身份粒度：BATCH批次/BAG吨包/VEHICLE车辆批次/UNIT单体',
   `current_state` varchar(32) DEFAULT 'CREATED' COMMENT '当前状态',
@@ -60,14 +60,14 @@ CREATE TABLE `aggregate_rfid_identity` (
   UNIQUE KEY `uk_aggregate_rfid_code` (`rfid_code`),
   KEY `idx_aggregate_rfid_material` (`material_id`),
   KEY `idx_aggregate_rfid_state` (`current_state`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数字骨料RFID身份';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='可信对象RFID身份';
 
 DROP TABLE IF EXISTS `aggregate_event`;
 CREATE TABLE `aggregate_event` (
   `event_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '事件ID',
-  `identity_id` bigint(20) NOT NULL COMMENT 'RFID身份ID',
+  `identity_id` bigint(20) NOT NULL COMMENT '标签身份ID',
   `rfid_code` varchar(128) NOT NULL COMMENT 'RFID/EPC编码',
-  `material_id` bigint(20) DEFAULT NULL COMMENT '骨料档案ID',
+  `material_id` bigint(20) DEFAULT NULL COMMENT '对象档案ID',
   `event_type` varchar(32) NOT NULL COMMENT '事件类型',
   `event_name` varchar(64) DEFAULT NULL COMMENT '事件名称',
   `event_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '事件时间',
@@ -99,7 +99,7 @@ CREATE TABLE `aggregate_event` (
   KEY `idx_aggregate_event_identity` (`identity_id`),
   KEY `idx_aggregate_event_rfid` (`rfid_code`),
   KEY `idx_aggregate_event_type_time` (`event_type`, `event_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数字骨料RFID事件流水';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='可信对象RFID事件流水';
 
 DROP TABLE IF EXISTS `aggregate_device`;
 CREATE TABLE `aggregate_device` (
@@ -119,26 +119,31 @@ CREATE TABLE `aggregate_device` (
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`device_id`),
   UNIQUE KEY `uk_aggregate_device_code` (`device_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数字骨料采集设备';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='可信对象采集设备';
 
 -- 菜单与权限增量。若菜单ID与现有系统冲突，可调整为未占用ID。
-DELETE FROM `sys_menu` WHERE `menu_id` IN (2300, 2301, 2302, 2303, 2304, 2311, 2312, 2313, 2314, 2315, 2321, 2322, 2323, 2324, 2331, 2341);
-INSERT INTO `sys_menu` VALUES (2300, '骨料管理', 0, 4, 'aggregate', NULL, '', 1, 0, 'M', '0', '0', '', 'tree', 'admin', NOW(), '', NULL, '数字骨料管理目录');
-INSERT INTO `sys_menu` VALUES (2301, '骨料档案', 2300, 1, 'material', 'warehouse/aggregate/material/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:material:list', 'list', 'admin', NOW(), '', NULL, '数字骨料基础档案');
-INSERT INTO `sys_menu` VALUES (2302, 'RFID身份', 2300, 2, 'rfid', 'warehouse/aggregate/rfid/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:rfid:list', 'component', 'admin', NOW(), '', NULL, '数字骨料RFID身份');
-INSERT INTO `sys_menu` VALUES (2303, '事件采集', 2300, 3, 'event', 'warehouse/aggregate/event/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:event:list', 'form', 'admin', NOW(), '', NULL, '数字骨料事件采集');
-INSERT INTO `sys_menu` VALUES (2304, '生命周期', 2300, 4, 'lifecycle', 'warehouse/aggregate/lifecycle/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:lifecycle:query', 'time-range', 'admin', NOW(), '', NULL, 'RFID生命周期时间线');
+DELETE FROM `sys_menu` WHERE `menu_id` IN (2300, 2301, 2302, 2303, 2304, 2305, 2311, 2312, 2313, 2314, 2315, 2321, 2322, 2323, 2324, 2331, 2341, 2351, 2352, 2353, 2354);
+INSERT INTO `sys_menu` VALUES (2300, '可信对象平台', 0, 4, 'aggregate', NULL, '', 1, 0, 'M', '0', '0', '', 'tree', 'admin', NOW(), '', NULL, '基于模板、标签、事件、时间线的可信对象平台');
+INSERT INTO `sys_menu` VALUES (2301, '对象管理', 2300, 1, 'material', 'warehouse/aggregate/material/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:material:list', 'list', 'admin', NOW(), '', NULL, '可信对象管理');
+INSERT INTO `sys_menu` VALUES (2302, '标签绑定', 2300, 2, 'rfid', 'warehouse/aggregate/rfid/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:rfid:list', 'component', 'admin', NOW(), '', NULL, '对象标签绑定');
+INSERT INTO `sys_menu` VALUES (2303, '事件中心', 2300, 3, 'event', 'warehouse/aggregate/event/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:event:list', 'form', 'admin', NOW(), '', NULL, '可信对象事件中心');
+INSERT INTO `sys_menu` VALUES (2304, '追踪时间线', 2300, 4, 'lifecycle', 'warehouse/aggregate/lifecycle/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:lifecycle:query', 'time-range', 'admin', NOW(), '', NULL, '可信对象追踪时间线');
+INSERT INTO `sys_menu` VALUES (2305, '模板管理', 2300, 5, 'subjectTemplate', 'warehouse/aggregate/subjectTemplate/index', '', 1, 0, 'C', '0', '0', 'warehouse:aggregate:subjectTemplate:list', 'build', 'admin', NOW(), '', NULL, '对象模板管理');
 
-INSERT INTO `sys_menu` VALUES (2311, '骨料档案查询', 2301, 1, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:query', '#', 'admin', NOW(), '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2312, '骨料档案新增', 2301, 2, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:add', '#', 'admin', NOW(), '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2313, '骨料档案修改', 2301, 3, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:edit', '#', 'admin', NOW(), '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2314, '骨料档案删除', 2301, 4, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:remove', '#', 'admin', NOW(), '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2315, '骨料批量发行', 2301, 5, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:import', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2311, '对象查询', 2301, 1, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2312, '对象新增', 2301, 2, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:add', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2313, '对象修改', 2301, 3, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:edit', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2314, '对象删除', 2301, 4, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:remove', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2315, '对象批次创建', 2301, 5, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:material:import', '#', 'admin', NOW(), '', NULL, '');
 
-INSERT INTO `sys_menu` VALUES (2321, 'RFID身份查询', 2302, 1, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:rfid:query', '#', 'admin', NOW(), '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2322, 'RFID身份新增', 2302, 2, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:rfid:add', '#', 'admin', NOW(), '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2323, 'RFID身份修改', 2302, 3, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:rfid:edit', '#', 'admin', NOW(), '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2324, 'RFID身份删除', 2302, 4, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:rfid:remove', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2321, '标签绑定查询', 2302, 1, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:rfid:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2322, '标签绑定新增', 2302, 2, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:rfid:add', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2323, '标签绑定修改', 2302, 3, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:rfid:edit', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2324, '标签绑定删除', 2302, 4, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:rfid:remove', '#', 'admin', NOW(), '', NULL, '');
 
 INSERT INTO `sys_menu` VALUES (2331, '事件采集新增', 2303, 1, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:event:add', '#', 'admin', NOW(), '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2341, '生命周期查询', 2304, 1, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:lifecycle:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2341, '追踪时间线查询', 2304, 1, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:lifecycle:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2351, '模板管理查询', 2305, 1, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:subjectTemplate:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2352, '模板管理新增', 2305, 2, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:subjectTemplate:add', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2353, '模板管理修改', 2305, 3, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:subjectTemplate:edit', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2354, '模板管理删除', 2305, 4, '', '', '', 1, 0, 'F', '0', '0', 'warehouse:aggregate:subjectTemplate:remove', '#', 'admin', NOW(), '', NULL, '');

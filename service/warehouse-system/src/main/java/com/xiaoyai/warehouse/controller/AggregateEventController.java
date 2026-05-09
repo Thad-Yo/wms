@@ -33,7 +33,7 @@ public class AggregateEventController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('warehouse:aggregate:event:add')")
-    @Log(title = "数字骨料RFID事件", businessType = BusinessType.INSERT)
+    @Log(title = "骨料RFID事件", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody AggregateEventDto aggregateEventDto) {
         aggregateEventDto.setCreateBy(getUsername());

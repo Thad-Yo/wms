@@ -50,10 +50,10 @@
         a.update_by,
         a.update_time,
         a.remark,
-        a.`out_receipt_id`,
-        a.`out_document_number`,
-        a.`in_receipt_id`,
-        a.`in_document_number`,
+        a."out_receipt_id",
+        a."out_document_number",
+        a."in_receipt_id",
+        a."in_document_number",
         b.nick_name apply_user_name,
         d.nick_name requested_user_name,
         c.warehouse_name apply_warehouse_name
@@ -62,7 +62,7 @@
         LEFT JOIN sys_user b on a.apply_user_id = b.user_id
         LEFT JOIN sys_user d on a.requested_user_id = d.user_id
         LEFT JOIN warehouse c on c.warehouse_id = a.apply_warehouse_id
-        where a.del_flag = 0
+        where a.del_flag = '0'
         <if test="applyUserName != null ">and b.nick_name like concat('%', #{applyUserName}, '%')</if>
         <if test="applyUserId != null ">and a.apply_user_id = #{applyUserId}</if>
         <if test="documentNumber != null  and a.documentNumber != ''">and a.document_number = #{documentNumber}</if>
@@ -92,7 +92,7 @@
         FROM warehouse_apply_receipt a
                  LEFT JOIN sys_user b on a.apply_user_id = b.user_id
                  LEFT JOIN warehouse c on c.warehouse_id = a.apply_warehouse_id
-        where a.del_flag = 0
+        where a.del_flag = '0'
           and a.apply_receipt_id = #{applyReceiptId}
     </select>
 
@@ -144,12 +144,12 @@
 
     <update id="deleteWarehouseApplyReceiptByApplyReceiptId" parameterType="Long">
         update warehouse_apply_receipt
-        set del_flag = 1
+        set del_flag = '1'
         where apply_receipt_id = #{applyReceiptId}
     </update>
 
     <update id="deleteWarehouseApplyReceiptByApplyReceiptIds" parameterType="String">
-        update warehouse_apply_receipt set del_flag = 1 where apply_receipt_id in
+        update warehouse_apply_receipt set del_flag = '1' where apply_receipt_id in
         <foreach item="applyReceiptId" collection="array" open="(" separator="," close=")">
             #{applyReceiptId}
         </foreach>
