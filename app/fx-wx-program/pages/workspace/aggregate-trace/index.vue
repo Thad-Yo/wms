@@ -16,18 +16,13 @@
 
 			<view class="scan-panel">
 				<view class="panel-label">骨料RFID编码</view>
-				<view class="rfid-box" :class="{ empty: !form.rfidCode }">
-					<text class="rfid-text">{{ form.rfidCode || '请使用PDA扫描RFID标签' }}</text>
+				<view class="search-row">
+					<view class="search-box">
+						<text class="cuIcon-qr_code search-icon"></text>
+						<text class="search-text">{{ form.rfidCode }}</text>
+					</view>
+					<button class="cu-btn bg-green lg round query-btn" @tap="queryTrace">搜索</button>
 				</view>
-				<view class="panel-tip">
-					<text class="cuIcon-infofill text-orange"></text>
-					<text class="tip-text">扫描值只读，不允许手工编辑，避免录入错误。</text>
-				</view>
-			</view>
-
-			<view class="action-row">
-				<button class="cu-btn line-green lg round ghost-btn" @tap="mockScan">模拟扫描</button>
-				<button class="cu-btn bg-green lg round query-btn" @tap="queryTrace">搜索</button>
 			</view>
 		</view>
 
@@ -111,7 +106,7 @@
 		data() {
 			return {
 				form: {
-					rfidCode: ''
+					rfidCode: 'RFID-AGG-20260512-00018'
 				},
 				result: {
 					found: false,
@@ -130,9 +125,6 @@
 			}
 		},
 		methods: {
-			mockScan() {
-				this.form.rfidCode = 'RFID-AGG-20260512-00018'
-			},
 			queryTrace() {
 				if (!this.form.rfidCode) {
 					this.mes('请先通过PDA扫描RFID编码')
@@ -188,9 +180,22 @@
 	.page {
 		min-height: 100vh;
 		padding: 24rpx;
+		position: relative;
 		background:
-			radial-gradient(circle at top right, rgba(34, 197, 94, 0.18), transparent 24%),
-			linear-gradient(180deg, #eef9f1 0%, #f6f8fb 36%, #f4f6f8 100%);
+			linear-gradient(180deg, #1fca7c 0%, #83e0a8 32%, #eef9f1 52%, #f6f8fb 72%, #f4f6f8 100%);
+	}
+
+	.page::before {
+		content: '';
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 46vh;
+		background:
+			radial-gradient(circle at top right, rgba(255, 255, 255, 0.24), transparent 22%),
+			radial-gradient(circle at left 20% top 8%, rgba(255, 255, 255, 0.18), transparent 18%);
+		pointer-events: none;
 	}
 
 	.hero-card,
@@ -268,44 +273,42 @@
 		margin-bottom: 16rpx;
 	}
 
-	.rfid-box {
-		border-radius: 24rpx;
-		border: 2rpx dashed #86efac;
-		background: #f5fbf7;
-		padding: 26rpx 22rpx;
+	.search-row {
+		display: flex;
+		align-items: center;
+		margin-top: 12rpx;
 	}
 
-	.rfid-box.empty {
-		border-color: #d1d5db;
-		background: #f9fafb;
+	.search-box {
+		flex: 1;
+		height: 92rpx;
+		border-radius: 999rpx;
+		background: #f6faf7;
+		border: 2rpx solid #cfeeda;
+		display: flex;
+		align-items: center;
+		padding: 0 28rpx;
+		box-shadow: inset 0 0 0 1rpx rgba(34, 197, 94, 0.04);
 	}
 
-	.rfid-text {
-		font-size: 30rpx;
-		font-weight: 700;
+	.search-icon {
+		font-size: 34rpx;
+		color: #19a95b;
+		margin-right: 16rpx;
+	}
+
+	.search-text {
+		flex: 1;
+		font-size: 28rpx;
+		font-weight: 600;
 		color: #111827;
 		word-break: break-all;
 	}
 
-	.panel-tip {
-		margin-top: 16rpx;
-		display: flex;
-		align-items: center;
-		line-height: 1.6;
-	}
-
-	.action-row {
-		display: flex;
-		margin-top: 28rpx;
-	}
-
-	.ghost-btn {
-		flex: 1;
-		margin-right: 16rpx;
-	}
-
 	.query-btn {
-		flex: 1.4;
+		width: 188rpx;
+		height: 92rpx;
+		margin-left: 16rpx;
 	}
 
 	.subject-card,
