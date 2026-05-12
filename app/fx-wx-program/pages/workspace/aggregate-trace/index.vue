@@ -24,6 +24,21 @@
 					<button class="cu-btn bg-green lg round query-btn" @tap="queryTrace">搜索</button>
 				</view>
 			</view>
+
+			<view class="hero-stats">
+				<view class="stat-card">
+					<view class="stat-label">当前状态</view>
+					<view class="stat-value">{{ result.found ? result.bindStatus : '待查询' }}</view>
+				</view>
+				<view class="stat-card">
+					<view class="stat-label">主体类型</view>
+					<view class="stat-value">{{ result.found ? result.subjectType : '--' }}</view>
+				</view>
+				<view class="stat-card">
+					<view class="stat-label">最近位置</view>
+					<view class="stat-value small">{{ result.found ? result.latestLocation : '--' }}</view>
+				</view>
+			</view>
 		</view>
 
 		<view class="content-card shadow">
@@ -73,9 +88,11 @@
 
 				<view class="detail-card">
 					<view class="block-title">主体字段</view>
-					<view class="field-row" v-for="(item, index) in result.fields" :key="index">
-						<view class="field-label">{{ item.label }}</view>
-						<view class="field-value">{{ item.value }}</view>
+					<view class="field-cards">
+						<view class="field-card" v-for="(item, index) in result.fields" :key="index">
+							<view class="field-chip">{{ item.label }}</view>
+							<view class="field-card-value">{{ item.value }}</view>
+						</view>
 					</view>
 				</view>
 
@@ -84,9 +101,15 @@
 					<view class="timeline-item" v-for="(item, index) in result.timeline" :key="index">
 						<view class="timeline-dot"></view>
 						<view class="timeline-body">
-							<view class="timeline-title">{{ item.title }}</view>
+							<view class="timeline-top">
+								<view class="timeline-title">{{ item.title }}</view>
+								<view class="timeline-stage">{{ item.stage }}</view>
+							</view>
 							<view class="timeline-desc">{{ item.desc }}</view>
-							<view class="timeline-time">{{ item.time }}</view>
+							<view class="timeline-footer">
+								<view class="timeline-operator">{{ item.operator }}</view>
+								<view class="timeline-time">{{ item.time }}</view>
+							</view>
 						</view>
 					</view>
 				</view>
@@ -159,15 +182,21 @@
 					}],
 					timeline: [{
 						title: '主体绑定完成',
+						stage: '绑定',
 						desc: 'RFID已绑定到梁板主体 A-01',
+						operator: '操作人：王建国',
 						time: '2026-05-12 13:40'
 					}, {
 						title: '入场验收',
+						stage: '验收',
 						desc: '完成预制件入场和身份校验',
+						operator: '操作人：李建峰',
 						time: '2026-05-12 11:15'
 					}, {
 						title: '骨料出厂',
+						stage: '出厂',
 						desc: '骨料从生产基地出厂，状态正常',
+						operator: '操作人：赵东',
 						time: '2026-05-11 18:22'
 					}]
 				}
@@ -208,8 +237,7 @@
 
 	.hero-top,
 	.content-head,
-	.subject-top,
-	.field-row {
+	.subject-top {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -279,6 +307,40 @@
 		margin-top: 12rpx;
 	}
 
+	.hero-stats {
+		display: flex;
+		margin-top: 24rpx;
+		margin-left: -8rpx;
+		margin-right: -8rpx;
+	}
+
+	.stat-card {
+		flex: 1;
+		margin: 0 8rpx;
+		padding: 20rpx 18rpx;
+		border-radius: 22rpx;
+		background: linear-gradient(180deg, #f8fcf9 0%, #eef9f3 100%);
+		border: 1rpx solid #daf2e3;
+		min-height: 128rpx;
+	}
+
+	.stat-label {
+		font-size: 22rpx;
+		color: #6b7280;
+	}
+
+	.stat-value {
+		margin-top: 14rpx;
+		font-size: 30rpx;
+		font-weight: 700;
+		color: #14213d;
+		line-height: 1.35;
+	}
+
+	.stat-value.small {
+		font-size: 24rpx;
+	}
+
 	.search-box {
 		flex: 1;
 		height: 92rpx;
@@ -340,7 +402,6 @@
 	}
 
 	.grid-value,
-	.field-value,
 	.timeline-title {
 		font-size: 28rpx;
 		font-weight: 600;
@@ -348,24 +409,44 @@
 		margin-top: 8rpx;
 	}
 
-	.field-row {
-		padding: 18rpx 0;
-		border-bottom: 1rpx solid #edf2f7;
-		align-items: flex-start;
+	.field-cards {
+		display: flex;
+		flex-wrap: wrap;
+		margin-top: 20rpx;
 	}
 
-	.field-row:last-child {
-		border-bottom: none;
+	.field-card {
+		width: calc(50% - 10rpx);
+		margin-bottom: 20rpx;
+		margin-right: 20rpx;
+		padding: 20rpx;
+		border-radius: 20rpx;
+		background: #ffffff;
+		border: 1rpx solid #edf2f7;
+		box-shadow: 0 6rpx 18rpx rgba(15, 23, 42, 0.04);
 	}
 
-	.field-label {
-		width: 180rpx;
+	.field-card:nth-child(2n) {
+		margin-right: 0;
 	}
 
-	.field-value {
-		flex: 1;
-		text-align: right;
-		margin-top: 0;
+	.field-chip {
+		display: inline-flex;
+		align-items: center;
+		padding: 8rpx 16rpx;
+		border-radius: 999rpx;
+		background: #ecfdf3;
+		color: #15803d;
+		font-size: 22rpx;
+		font-weight: 600;
+	}
+
+	.field-card-value {
+		margin-top: 16rpx;
+		font-size: 28rpx;
+		font-weight: 700;
+		color: #111827;
+		line-height: 1.5;
 	}
 
 	.timeline-item {
@@ -386,6 +467,36 @@
 
 	.timeline-body {
 		flex: 1;
+		background: #ffffff;
+		border-radius: 20rpx;
+		padding: 22rpx;
+		border: 1rpx solid #edf2f7;
+		box-shadow: 0 6rpx 18rpx rgba(15, 23, 42, 0.04);
+	}
+
+	.timeline-top,
+	.timeline-footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.timeline-stage {
+		padding: 8rpx 16rpx;
+		border-radius: 999rpx;
+		font-size: 22rpx;
+		font-weight: 600;
+		color: #0f766e;
+		background: #ccfbf1;
+	}
+
+	.timeline-footer {
+		margin-top: 16rpx;
+	}
+
+	.timeline-operator {
+		font-size: 24rpx;
+		color: #4b5563;
 	}
 
 	.empty-box {
