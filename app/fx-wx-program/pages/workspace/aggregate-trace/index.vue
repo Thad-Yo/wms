@@ -88,11 +88,9 @@
 
 				<view class="detail-card">
 					<view class="block-title">主体字段</view>
-					<view class="field-cards">
-						<view class="field-card" v-for="(item, index) in result.fields" :key="index">
-							<view class="field-chip">{{ item.label }}</view>
-							<view class="field-card-value">{{ item.value }}</view>
-						</view>
+					<view class="field-row" v-for="(item, index) in result.fields" :key="index">
+						<view class="field-label">{{ item.label }}</view>
+						<view class="field-value">{{ item.value }}</view>
 					</view>
 				</view>
 
@@ -237,7 +235,8 @@
 
 	.hero-top,
 	.content-head,
-	.subject-top {
+	.subject-top,
+	.field-row {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -402,6 +401,7 @@
 	}
 
 	.grid-value,
+	.field-value,
 	.timeline-title {
 		font-size: 28rpx;
 		font-weight: 600;
@@ -409,44 +409,24 @@
 		margin-top: 8rpx;
 	}
 
-	.field-cards {
-		display: flex;
-		flex-wrap: wrap;
-		margin-top: 20rpx;
+	.field-row {
+		padding: 18rpx 0;
+		border-bottom: 1rpx solid #edf2f7;
+		align-items: flex-start;
 	}
 
-	.field-card {
-		width: calc(50% - 10rpx);
-		margin-bottom: 20rpx;
-		margin-right: 20rpx;
-		padding: 20rpx;
-		border-radius: 20rpx;
-		background: #ffffff;
-		border: 1rpx solid #edf2f7;
-		box-shadow: 0 6rpx 18rpx rgba(15, 23, 42, 0.04);
+	.field-row:last-child {
+		border-bottom: none;
 	}
 
-	.field-card:nth-child(2n) {
-		margin-right: 0;
+	.field-label {
+		width: 180rpx;
 	}
 
-	.field-chip {
-		display: inline-flex;
-		align-items: center;
-		padding: 8rpx 16rpx;
-		border-radius: 999rpx;
-		background: #ecfdf3;
-		color: #15803d;
-		font-size: 22rpx;
-		font-weight: 600;
-	}
-
-	.field-card-value {
-		margin-top: 16rpx;
-		font-size: 28rpx;
-		font-weight: 700;
-		color: #111827;
-		line-height: 1.5;
+	.field-value {
+		flex: 1;
+		text-align: right;
+		margin-top: 0;
 	}
 
 	.timeline-item {
