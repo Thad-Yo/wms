@@ -15,7 +15,9 @@ import com.xiaoyai.warehouse.domain.aggregate.AggregateRfidIdentity;
 import com.xiaoyai.warehouse.domain.aggregate.AggregateSubjectBindRecord;
 import com.xiaoyai.warehouse.domain.aggregate.AggregateSubjectField;
 import com.xiaoyai.warehouse.domain.aggregate.AggregateSubjectTemplate;
+import com.xiaoyai.warehouse.domain.aggregate.dto.AggregateAppTraceQueryDto;
 import com.xiaoyai.warehouse.domain.aggregate.dto.AggregateRfidBindGoodsDto;
+import com.xiaoyai.warehouse.domain.aggregate.vo.AggregateAppTraceVo;
 import com.xiaoyai.warehouse.domain.aggregate.vo.AggregateLifecycleVo;
 import com.xiaoyai.warehouse.domain.dto.WarehouseGoodsQueryDto;
 import com.xiaoyai.warehouse.enums.AggregateEventType;
@@ -47,6 +49,7 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -396,6 +399,35 @@ public class AggregateRfidIdentityServiceImpl extends ServiceImpl<AggregateRfidI
     }
 
     @Override
+    public AggregateAppTraceVo selectAppTraceByRfidCode(AggregateAppTraceQueryDto queryDto) {
+        if (queryDto == null || StringUtils.isBlank(queryDto.getRfidCode())) {
+            throw new ServiceException("RFID编码不能为空");
+        }
+        AggregateLifecycleVo lifecycleVo = selectLifecycleByRfidCode(StringUtils.trim(queryDto.getRfidCode()));
+        AggregateRfidIdentity identity = lifecycleVo.getIdentity();
+        AggregateSubjectBindRecord latestBindRecord = getLatestBindRecord(lifecycleVo.getBindRecords());
+
+        AggregateAppTraceVo vo = new AggregateAppTraceVo();
+        vo.setRfidCode(identity.getRfidCode());
+        vo.setBoneName(StringUtils.defaultString(identity.getMaterialName()));
+        vo.setBatchNo(StringUtils.defaultString(identity.getBatchNo()));
+        vo.setLatestLocation(resolveLatestLocation(identity, lifecycleVo.getEvents()));
+        vo.setBindStatus(identity.getBindGoodsId() == null ? "未绑定" : "已绑定");
+        vo.setBindTime(formatDate(identity.getBindGoodsTime() != null ? identity.getBindGoodsTime() : identity.getBindTime()));
+
+        if (latestBindRecord != null) {
+            vo.setSubjectName(StringUtils.defaultString(latestBindRecord.getBindGoodsName()));
+            vo.setSubjectCode(StringUtils.defaultString(latestBindRecord.getBindGoodsCode()));
+            vo.setSubjectType(StringUtils.defaultString(latestBindRecord.getModuleName()));
+            vo.setTemplateName(StringUtils.defaultString(latestBindRecord.getSubjectName()));
+            vo.setFields(buildFieldItems(latestBindRecord));
+        }
+
+        vo.setTimeline(buildTimelineItems(lifecycleVo.getEvents()));
+        return vo;
+    }
+
+    @Override
     public List<AggregateRfidIdentity> selectByMaterialId(Long materialId) {
         if (materialId == null) {
             return new ArrayList<>();
@@ -568,5 +600,107 @@ public class AggregateRfidIdentityServiceImpl extends ServiceImpl<AggregateRfidI
             return field.getFieldLabel() + "示例";
         }
         return field.getFieldLabel() + "示例";
+    }
+
+    private AggregateSubjectBindRecord getLatestBindRecord(List<AggregateSubjectBindRecord> bindRecords) {
+        if (bindRecords == null || bindRecords.isEmpty()) {
+            return null;
+        }
+        return bindRecords.stream()
+                .max(Comparator.comparing(AggregateSubjectBindRecord::getWriteTime,
+                        Comparator.nullsLast(Date::compareTo)))
+                .orElse(bindRecords.get(bindRecords.size() - 1));
+    }
+
+    private List<AggregateAppTraceVo.FieldItem> buildFieldItems(AggregateSubjectBindRecord bindRecord) {
+        List<AggregateAppTraceVo.FieldItem> items = new ArrayList<>();
+        if (bindRecord == null || StringUtils.isBlank(bindRecord.getFormDataJson())) {
+            return items;
+        }
+        Map<String, Object> formData = JSON.parseObject(bindRecord.getFormDataJson(), new TypeReference<Map<String, Object>>() {});
+        List<AggregateSubjectField> snapshotFields = JSON.parseArray(bindRecord.getFieldSnapshotJson(), AggregateSubjectField.class);
+        if (snapshotFields != null && !snapshotFields.isEmpty()) {
+            for (AggregateSubjectField field : snapshotFields) {
+                Object value = formData == null ? null : formData.get(field.getFieldCode());
+                AggregateAppTraceVo.FieldItem item = new AggregateAppTraceVo.FieldItem();
+                item.setLabel(field.getFieldLabel());
+                item.setValue(value == null ? "" : String.valueOf(value));
+                items.add(item);
+            }
+            return items;
+        }
+        if (formData != null) {
+            for (Map.Entry<String, Object> entry : formData.entrySet()) {
+                AggregateAppTraceVo.FieldItem item = new AggregateAppTraceVo.FieldItem();
+                item.setLabel(entry.getKey());
+                item.setValue(entry.getValue() == null ? "" : String.valueOf(entry.getValue()));
+                items.add(item);
+            }
+        }
+        return items;
+    }
+
+    private List<AggregateAppTraceVo.TimelineItem> buildTimelineItems(List<AggregateEvent> events) {
+        List<AggregateAppTraceVo.TimelineItem> items = new ArrayList<>();
+        if (events == null || events.isEmpty()) {
+            return items;
+        }
+        for (AggregateEvent event : events) {
+            AggregateAppTraceVo.TimelineItem item = new AggregateAppTraceVo.TimelineItem();
+            item.setTitle(StringUtils.isNotBlank(event.getActionName()) ? event.getActionName() : event.getEventName());
+            item.setStage(StringUtils.defaultString(event.getEventName(), "事件"));
+            item.setDesc(buildEventDesc(event));
+            item.setOperator(StringUtils.isNotBlank(event.getOperatorName()) ? "操作人：" + event.getOperatorName() : "");
+            item.setTime(formatDate(event.getEventTime()));
+            items.add(item);
+        }
+        return items;
+    }
+
+    private String buildEventDesc(AggregateEvent event) {
+        if (StringUtils.isNotBlank(event.getRemark())) {
+            return event.getRemark();
+        }
+        List<String> parts = new ArrayList<>();
+        if (StringUtils.isNotBlank(event.getWarehouseName())) {
+            parts.add("仓库：" + event.getWarehouseName());
+        }
+        if (StringUtils.isNotBlank(event.getLocationName())) {
+            parts.add("位置：" + event.getLocationName());
+        }
+        if (StringUtils.isNotBlank(event.getSourceReceiptNo())) {
+            parts.add("单号：" + event.getSourceReceiptNo());
+        }
+        if (parts.isEmpty()) {
+            return StringUtils.defaultString(event.getEventName(), "状态已更新");
+        }
+        return String.join("；", parts);
+    }
+
+    private String resolveLatestLocation(AggregateRfidIdentity identity, List<AggregateEvent> events) {
+        if (StringUtils.isNotBlank(identity.getCurrentLocation())) {
+            return identity.getCurrentLocation();
+        }
+        if (events != null) {
+            for (AggregateEvent event : events) {
+                if (StringUtils.isNotBlank(event.getLocationName())) {
+                    return event.getLocationName();
+                }
+                if (StringUtils.isNotBlank(event.getWarehouseName())) {
+                    return event.getWarehouseName();
+                }
+            }
+        }
+        if (StringUtils.isNotBlank(identity.getCurrentWarehouseName())) {
+            return identity.getCurrentWarehouseName();
+        }
+        return "";
+    }
+
+    private String formatDate(Date date) {
+        if (date == null) {
+            return "";
+        }
+        return DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, date);
     }
 }

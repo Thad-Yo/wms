@@ -2,7 +2,9 @@ package com.xiaoyai.warehouse.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xiaoyai.warehouse.domain.aggregate.AggregateRfidIdentity;
+import com.xiaoyai.warehouse.domain.aggregate.dto.AggregateAppTraceQueryDto;
 import com.xiaoyai.warehouse.domain.aggregate.dto.AggregateRfidBindGoodsDto;
+import com.xiaoyai.warehouse.domain.aggregate.vo.AggregateAppTraceVo;
 import com.xiaoyai.warehouse.domain.aggregate.vo.AggregateLifecycleVo;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +33,8 @@ public interface IAggregateRfidIdentityService extends IService<AggregateRfidIde
     int deleteAggregateRfidIdentityByIds(Long[] identityIds);
 
     AggregateLifecycleVo selectLifecycleByRfidCode(String rfidCode);
+
+    AggregateAppTraceVo selectAppTraceByRfidCode(AggregateAppTraceQueryDto queryDto);
 
     List<AggregateRfidIdentity> selectByMaterialId(Long materialId);
 }

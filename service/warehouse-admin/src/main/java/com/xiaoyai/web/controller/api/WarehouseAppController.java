@@ -25,6 +25,8 @@ import com.xiaoyai.system.service.ISysConfigService;
 import com.xiaoyai.system.service.ISysUserService;
 import com.xiaoyai.warehouse.domain.*;
 import com.xiaoyai.warehouse.domain.dto.*;
+import com.xiaoyai.warehouse.domain.aggregate.dto.AggregateAppTraceQueryDto;
+import com.xiaoyai.warehouse.domain.aggregate.vo.AggregateAppTraceVo;
 import com.xiaoyai.warehouse.domain.vo.WarehouseInReceiptVo;
 import com.xiaoyai.warehouse.domain.vo.WarehouseOutReceiptVo;
 import com.xiaoyai.warehouse.service.*;
@@ -80,6 +82,8 @@ public class WarehouseAppController extends BaseController {
     private IWarehouseApplyReceiptService warehouseApplyReceiptService;
     @Autowired
     private IWarehouseManagerService iWarehouseManagerService;
+    @Autowired
+    private IAggregateRfidIdentityService aggregateRfidIdentityService;
     /**
      * 登录方法
      *
@@ -422,5 +426,14 @@ public class WarehouseAppController extends BaseController {
     @GetMapping("/goods/snCode/{code}")
     public AjaxResult applyReceiptDo(@PathVariable("code") String code) {
         return AjaxResult.success(iWarehouseGoodsService.getSnCodeDetail(code));
+    }
+
+    @ApiOperation("骨料溯源详情")
+    @GetMapping("/aggregate/trace/{rfidCode}")
+    public AjaxResult aggregateTrace(@PathVariable("rfidCode") String rfidCode) {
+        AggregateAppTraceQueryDto queryDto = new AggregateAppTraceQueryDto();
+        queryDto.setRfidCode(rfidCode);
+        AggregateAppTraceVo traceVo = aggregateRfidIdentityService.selectAppTraceByRfidCode(queryDto);
+        return AjaxResult.success(traceVo);
     }
 }
