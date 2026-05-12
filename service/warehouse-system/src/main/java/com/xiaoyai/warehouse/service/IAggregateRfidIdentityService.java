@@ -24,7 +24,7 @@ public interface IAggregateRfidIdentityService extends IService<AggregateRfidIde
         return batchBindObject(bindGoodsDto, operatorName);
     }
 
-    void exportBindTemplate(HttpServletResponse response);
+    void exportBindTemplate(HttpServletResponse response, AggregateRfidIdentity aggregateRfidIdentity);
 
     String importBindData(MultipartFile file, String operatorName) throws Exception;
 

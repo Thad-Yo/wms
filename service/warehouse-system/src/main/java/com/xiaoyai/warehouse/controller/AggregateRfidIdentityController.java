@@ -102,8 +102,8 @@ public class AggregateRfidIdentityController extends BaseController {
     @PreAuthorize("@ss.hasPermi('warehouse:aggregate:rfid:edit')")
     @Log(title = "骨料绑定模板导出", businessType = BusinessType.EXPORT)
     @PostMapping("/exportBindTemplate")
-    public void exportBindTemplate(HttpServletResponse response) {
-        aggregateRfidIdentityService.exportBindTemplate(response);
+    public void exportBindTemplate(HttpServletResponse response, AggregateRfidIdentity aggregateRfidIdentity) {
+        aggregateRfidIdentityService.exportBindTemplate(response, aggregateRfidIdentity);
     }
 
     @PreAuthorize("@ss.hasPermi('warehouse:aggregate:rfid:edit')")

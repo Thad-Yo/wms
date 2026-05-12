@@ -63,7 +63,7 @@ export function getPermissions() {
 
 export function setRoles(value) {
   try {
-    uni.setStorageSync('roles', newValue);
+    uni.setStorageSync('roles', value);
   } catch (e) {
     return;
   }

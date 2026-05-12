@@ -228,7 +228,7 @@ public class AggregateRfidIdentityServiceImpl extends ServiceImpl<AggregateRfidI
     }
 
     @Override
-    public void exportBindTemplate(HttpServletResponse response) {
+    public void exportBindTemplate(HttpServletResponse response, AggregateRfidIdentity aggregateRfidIdentity) {
         AggregateSubjectTemplate template = getEnabledTemplate();
         List<AggregateSubjectField> fieldList = selectTemplateFields(template.getTemplateId());
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
@@ -259,7 +259,8 @@ public class AggregateRfidIdentityServiceImpl extends ServiceImpl<AggregateRfidI
                 tip.createCell(i + 2).setCellValue(buildExampleValue(field));
             }
             Row note = sheet.createRow(2);
-            note.createCell(0).setCellValue("红色表头为必填项");
+            note.createCell(0).setCellValue("红色表头为必填项；建议仅填写未绑定RFID对应的货物编号及模板字段");
+            fillExportRows(sheet, aggregateRfidIdentity, fieldList);
             for (int i = 0; i < fieldList.size() + 2; i++) {
                 sheet.autoSizeColumn(i);
                 sheet.setColumnWidth(i, Math.min(sheet.getColumnWidth(i) + 1024, 12000));
@@ -338,6 +339,24 @@ public class AggregateRfidIdentityServiceImpl extends ServiceImpl<AggregateRfidI
                 result.append(String.join("<br/>", failMessages));
             }
             return result.toString();
+        }
+    }
+
+    private void fillExportRows(Sheet sheet, AggregateRfidIdentity query, List<AggregateSubjectField> fieldList) {
+        AggregateRfidIdentity exportQuery = query == null ? new AggregateRfidIdentity() : query;
+        applyUserScope(exportQuery);
+        if (StringUtils.isBlank(exportQuery.getUseStatus())) {
+            exportQuery.setUseStatus("UNUSED");
+        }
+        List<AggregateRfidIdentity> exportRows = baseMapper.selectAggregateRfidIdentityList(exportQuery);
+        int rowIndex = 3;
+        for (AggregateRfidIdentity item : exportRows) {
+            Row dataRow = sheet.createRow(rowIndex++);
+            dataRow.createCell(0).setCellValue(StringUtils.isBlank(item.getRfidCode()) ? "" : item.getRfidCode());
+            dataRow.createCell(1).setCellValue("");
+            for (int i = 0; i < fieldList.size(); i++) {
+                dataRow.createCell(i + 2).setCellValue("");
+            }
         }
     }
 

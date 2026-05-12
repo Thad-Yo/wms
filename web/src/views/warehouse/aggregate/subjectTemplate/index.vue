@@ -56,7 +56,7 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="模板编码" prop="subjectCode">
-              <el-input v-model="form.subjectCode" placeholder="请输入模板编码" />
+              <el-input v-model="form.subjectCode" disabled placeholder="系统自动生成" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -77,103 +77,92 @@
         </el-row>
       </el-form>
 
-      <div class="field-header">
-        <span>字段配置</span>
-        <el-button type="primary" plain size="mini" icon="el-icon-plus" @click="addField">新增字段</el-button>
-      </div>
+      <div>
+        <div class="field-header">
+          <span>字段配置</span>
+          <div class="field-header__actions">
+            <el-button type="primary" plain size="mini" icon="el-icon-plus" @click="addField">新增字段</el-button>
+          </div>
+        </div>
 
-      <div class="field-engine-tip">
-        模板不仅定义字段，还决定字段是否必填、是否参与检索/追溯/导出，以及在哪些事件节点允许编辑。
-      </div>
+        <div class="field-engine-tip">
+          按业务字段来配置即可，例如“生产日期”选择日期，“是否质检”选择下拉框，“数量”选择数字。
+        </div>
 
-      <el-table :data="form.fieldList" border class="field-table">
-        <el-table-column label="排序" width="70" align="center">
-          <template slot-scope="scope">
-            <el-input-number v-model="scope.row.sortOrder" :min="1" :max="999" size="mini" />
-          </template>
-        </el-table-column>
-        <el-table-column label="字段编码" min-width="130">
-          <template slot-scope="scope">
-            <el-input
-              v-model="scope.row.fieldCode"
-              placeholder="根据字段名称自动生成"
-              size="mini"
-              @input="handleFieldCodeInput(scope.row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="字段名称" min-width="130">
-          <template slot-scope="scope">
-            <el-input
-              v-model="scope.row.fieldLabel"
-              placeholder="请输入字段名称"
-              size="mini"
-              @input="handleFieldLabelInput(scope.row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="控件类型" width="110">
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.fieldType" size="mini" @change="handleFieldTypeChange(scope.row)">
-              <el-option label="文本" value="input" />
-              <el-option label="多行文本" value="textarea" />
-              <el-option label="下拉" value="select" />
-              <el-option label="日期" value="date" />
-              <el-option label="数字" value="number" />
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="必填" width="80" align="center">
-          <template slot-scope="scope">
-            <el-switch v-model="scope.row.requiredFlag" active-value="1" inactive-value="0" />
-          </template>
-        </el-table-column>
-        <el-table-column label="默认值" min-width="120">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.defaultValue" placeholder="默认值" size="mini" />
-          </template>
-        </el-table-column>
-        <el-table-column label="校验规则" min-width="150">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.validationRule" placeholder="如 regex:^\\d{4}-\\d{2}-\\d{2}$" size="mini" />
-          </template>
-        </el-table-column>
-        <el-table-column label="下拉选项" min-width="320">
-          <template slot-scope="scope">
-            <div v-if="scope.row.fieldType === 'select'">
-              <div v-for="(option, optionIndex) in scope.row.optionList" :key="optionIndex" class="option-row">
-                <el-input v-model="option.label" placeholder="选项名称" size="mini" class="option-input" />
-                <el-input v-model="option.value" placeholder="选项值" size="mini" class="option-input" />
-                <el-button type="text" size="mini" icon="el-icon-minus" @click="removeOption(scope.row, optionIndex)" />
+        <draggable v-model="form.fieldList" handle=".drag-handle" animation="200" @end="syncFieldSortOrder">
+          <transition-group type="transition" name="flip-list">
+            <div v-for="(field, index) in form.fieldList" :key="field._rowKey" class="field-card">
+              <div class="field-card__header">
+                <div class="field-card__title">
+                  <span class="drag-handle">
+                    <i class="el-icon-rank" />
+                  </span>
+                  <div class="field-title-editor">
+                    <el-input
+                      v-if="field.editingLabel"
+                      ref="fieldTitleInput"
+                      v-model="field.fieldLabel"
+                      size="mini"
+                      placeholder="请输入字段名称"
+                      @input="handleFieldLabelInput(field)"
+                      @blur="finishFieldTitleEdit(field, index)"
+                      @keyup.enter.native="finishFieldTitleEdit(field, index)"
+                    />
+                    <span
+                      v-else
+                      :class="['field-title-editor__text', { 'is-placeholder': !field.fieldLabel, 'is-saved': field.justUpdated }]"
+                      title="点击编辑"
+                      @click="startFieldTitleEdit(field, index)"
+                    >
+                      {{ field.fieldLabel || `点击编辑字段 ${index + 1}` }}
+                    </span>
+                  </div>
+                </div>
+                <div class="field-card__actions">
+                  <el-button type="text" size="mini" icon="el-icon-plus" @click="insertField(index)">下方增加</el-button>
+                  <el-button type="text" size="mini" icon="el-icon-delete" @click="removeField(index)">删除当前行</el-button>
+                </div>
               </div>
-              <el-button type="text" size="mini" icon="el-icon-plus" @click="addOption(scope.row)">新增选项</el-button>
+
+              <div class="field-editor">
+                <div class="field-editor__row">
+                  <div class="field-editor__item is-full">
+                    <div class="field-editor__label">字段类型</div>
+                    <el-radio-group v-model="field.fieldType" size="mini" @change="handleFieldTypeChange(field)">
+                      <el-radio-button label="input">文本</el-radio-button>
+                      <el-radio-button label="date">日期</el-radio-button>
+                      <el-radio-button label="select">下拉框</el-radio-button>
+                      <el-radio-button label="number">数字</el-radio-button>
+                      <el-radio-button label="textarea">多行文本</el-radio-button>
+                    </el-radio-group>
+                  </div>
+                </div>
+
+                <div class="field-editor__row">
+                  <div class="field-editor__item is-full">
+                    <el-checkbox v-model="field.requiredFlag" true-label="1" false-label="0">是否必填</el-checkbox>
+                  </div>
+                </div>
+
+                <div v-if="field.fieldType === 'select'" class="field-select-box">
+                  <div class="field-select-box__title">下拉选项</div>
+                  <div v-if="!field.optionList || !field.optionList.length" class="field-select-empty" @click="addFirstOption(field)">
+                    点击新增选项
+                  </div>
+                  <div v-else>
+                    <div v-for="(option, optionIndex) in field.optionList" :key="optionIndex" class="option-row">
+                      <el-input v-model="option.label" placeholder="选项名称" size="mini" class="option-input" />
+                      <el-input v-model="option.value" placeholder="选项值，默认同名称" size="mini" class="option-input" />
+                      <el-button type="text" size="mini" icon="el-icon-plus" @click="insertOption(field, optionIndex)">新增</el-button>
+                      <el-button type="text" size="mini" icon="el-icon-minus" @click="removeOption(field, optionIndex)">删除</el-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <span v-else>-</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="引擎能力" min-width="220">
-          <template slot-scope="scope">
-            <div class="flag-grid">
-              <el-checkbox v-model="scope.row.indexedFlag" true-label="1" false-label="0">检索</el-checkbox>
-              <el-checkbox v-model="scope.row.searchFlag" true-label="1" false-label="0">查询</el-checkbox>
-              <el-checkbox v-model="scope.row.traceFlag" true-label="1" false-label="0">追溯</el-checkbox>
-              <el-checkbox v-model="scope.row.exportFlag" true-label="1" false-label="0">导出</el-checkbox>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="可编辑事件" min-width="220">
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.editableEventTypeList" multiple collapse-tags size="mini" placeholder="选择事件节点">
-              <el-option v-for="item in editableEventOptions" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="80" align="center">
-          <template slot-scope="scope">
-            <el-button type="text" size="mini" @click="removeField(scope.$index)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+          </transition-group>
+        </draggable>
+      </div>
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -184,9 +173,11 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable'
 import {
   listAggregateSubjectTemplate,
   getAggregateSubjectTemplate,
+  getNextAggregateSubjectTemplateCode,
   addAggregateSubjectTemplate,
   updateAggregateSubjectTemplate,
   activateAggregateSubjectTemplate,
@@ -196,6 +187,9 @@ import {
 
 export default {
   name: 'AggregateSubjectTemplate',
+  components: {
+    draggable
+  },
   data() {
     return {
       loading: true,
@@ -204,19 +198,6 @@ export default {
       templateList: [],
       title: '',
       open: false,
-      editableEventOptions: [
-        { label: '创建对象', value: 'CREATED' },
-        { label: '绑定标签', value: 'BIND_OBJECT' },
-        { label: '入库', value: 'INBOUND' },
-        { label: '出库', value: 'OUTBOUND' },
-        { label: '运输', value: 'TRANSPORT' },
-        { label: '交接', value: 'HANDOVER' },
-        { label: '签收', value: 'SIGN' },
-        { label: '质检', value: 'QUALITY_CHECK' },
-        { label: '安装', value: 'INSTALL' },
-        { label: '售后', value: 'AFTER_SALE' },
-        { label: '销毁', value: 'DESTROY' }
-      ],
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -226,7 +207,6 @@ export default {
       },
       form: {},
       rules: {
-        subjectCode: [{ required: true, message: '模板编码不能为空', trigger: 'blur' }],
         subjectName: [{ required: true, message: '模板名称不能为空', trigger: 'blur' }]
       }
     }
@@ -258,13 +238,15 @@ export default {
     },
     createField(sortOrder) {
       return {
+        _rowKey: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        editingLabel: true,
+        justUpdated: false,
         fieldCode: null,
         fieldLabel: null,
         fieldType: 'input',
         defaultValue: null,
         optionsJson: null,
         optionList: [],
-        fieldCodeManual: false,
         validationRule: null,
         requiredFlag: '0',
         indexedFlag: '0',
@@ -286,8 +268,11 @@ export default {
     },
     handleAdd() {
       this.reset()
-      this.open = true
-      this.title = '新增骨料模板'
+      getNextAggregateSubjectTemplateCode().then((response) => {
+        this.form.subjectCode = response.msg || ''
+        this.open = true
+        this.title = '新增骨料模板'
+      })
     },
     handleUpdate(row) {
       const templateId = row.templateId
@@ -301,9 +286,10 @@ export default {
         this.form.fieldList = this.form.fieldList.map((item, index) => ({
           ...this.createField(index + 1),
           ...item,
-          optionList: this.formatOptionList(item.optionsJson),
-          editableEventTypeList: this.parseEditableEventTypes(item.editableEventTypes),
-          fieldCodeManual: Boolean(item.fieldCode)
+          _rowKey: `${item.fieldId || index}_${Date.now()}_${index}`,
+          editingLabel: false,
+          justUpdated: false,
+          optionList: this.formatOptionList(item.optionsJson)
         }))
         this.open = true
         this.title = '修改骨料模板'
@@ -348,30 +334,64 @@ export default {
         row.optionList = []
         return
       }
-      if (!row.optionList || !row.optionList.length) {
-        row.optionList = [{ label: '', value: '' }]
-      }
-    },
-    handleFieldLabelInput(row) {
-      if (!row.fieldCodeManual) {
-        row.fieldCode = this.generateFieldCode(row.fieldLabel)
-      }
-    },
-    handleFieldCodeInput(row) {
-      const autoCode = this.generateFieldCode(row.fieldLabel)
-      row.fieldCodeManual = Boolean(row.fieldCode) && row.fieldCode !== autoCode
-      if (!row.fieldCode) {
-        row.fieldCodeManual = false
-      }
-    },
-    addField() {
-      this.form.fieldList.push(this.createField(this.form.fieldList.length + 1))
-    },
-    addOption(row) {
       if (!row.optionList) {
         row.optionList = []
       }
-      row.optionList.push({ label: '', value: '' })
+    },
+    handleFieldLabelInput(row) {
+      row.fieldCode = this.generateFieldCode(row.fieldLabel)
+    },
+    startFieldTitleEdit(row, index) {
+      this.form.fieldList.forEach((item) => {
+        item.editingLabel = false
+      })
+      row.editingLabel = true
+      this.$nextTick(() => {
+        const refs = this.$refs.fieldTitleInput
+        const inputRef = Array.isArray(refs) ? refs[index] : refs
+        if (inputRef && inputRef.focus) {
+          inputRef.focus()
+        }
+      })
+    },
+    finishFieldTitleEdit(row) {
+      row.editingLabel = false
+      row.fieldLabel = (row.fieldLabel || '').trim()
+      this.handleFieldLabelInput(row)
+      row.justUpdated = true
+      setTimeout(() => {
+        row.justUpdated = false
+      }, 1200)
+    },
+    normalizeOptionList(optionList) {
+      return (optionList || []).map((item) => {
+        const label = (item.label || '').trim()
+        const value = (item.value || '').trim() || label
+        return { label, value }
+      }).filter(item => item.label)
+    },
+    addField() {
+      this.form.fieldList.push(this.createField(this.form.fieldList.length + 1))
+      this.$nextTick(() => {
+        const index = this.form.fieldList.length - 1
+        this.startFieldTitleEdit(this.form.fieldList[index], index)
+      })
+    },
+    insertField(index) {
+      this.form.fieldList.splice(index + 1, 0, this.createField(index + 2))
+      this.syncFieldSortOrder()
+      this.$nextTick(() => {
+        this.startFieldTitleEdit(this.form.fieldList[index + 1], index + 1)
+      })
+    },
+    insertOption(row, index) {
+      if (!row.optionList) {
+        row.optionList = []
+      }
+      row.optionList.splice(index + 1, 0, { label: '', value: '' })
+    },
+    addFirstOption(row) {
+      row.optionList = [{ label: '', value: '' }]
     },
     removeOption(row, index) {
       row.optionList.splice(index, 1)
@@ -384,6 +404,13 @@ export default {
       if (!this.form.fieldList.length) {
         this.form.fieldList.push(this.createField(1))
       }
+      this.syncFieldSortOrder()
+    },
+    syncFieldSortOrder() {
+      this.form.fieldList = (this.form.fieldList || []).map((item, index) => ({
+        ...item,
+        sortOrder: index + 1
+      }))
     },
     cancel() {
       this.open = false
@@ -401,12 +428,22 @@ export default {
           status: this.form.useCurrent ? '0' : '1',
           fieldList: this.form.fieldList.map((item, index) => {
             const field = { ...item }
+            field.fieldCode = this.generateFieldCode(field.fieldLabel) || `field_${index + 1}`
             field.sortOrder = field.sortOrder || index + 1
             field.placeholder = null
             field.optionsJson = field.fieldType === 'select' ? this.buildOptionsJson(field.optionList) : null
-            field.editableEventTypes = (field.editableEventTypeList || []).join(',')
+            field.validationRule = null
+            field.editableEventTypes = null
+            field.indexedFlag = '0'
+            field.searchFlag = '0'
+            field.traceFlag = '0'
+            field.exportFlag = '0'
             return field
           })
+        }
+        if (!payload.templateId && !payload.subjectCode) {
+          this.$modal.msgError('模板编码生成失败')
+          return
         }
         const request = this.form.templateId ? updateAggregateSubjectTemplate(payload) : addAggregateSubjectTemplate(payload)
         request.then(() => {
@@ -440,10 +477,6 @@ export default {
       }).filter((item) => item.label)
       return options.length ? JSON.stringify(options) : null
     },
-    parseEditableEventTypes(value) {
-      if (!value) return []
-      return value.split(',').map((item) => item.trim()).filter(Boolean)
-    },
     generateFieldCode(fieldLabel) {
       if (!fieldLabel) return ''
       const trimmed = fieldLabel.trim()
@@ -473,8 +506,151 @@ export default {
   font-weight: 600;
 }
 
-.field-table {
+.field-header__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.field-card-list {
   margin-top: 8px;
+}
+
+.field-card {
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border: 1px solid #ebeef5;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.05);
+}
+
+.field-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.field-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.field-title-editor {
+  min-width: 220px;
+}
+
+.field-title-editor__text {
+  display: inline-block;
+  min-width: 220px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: text;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-title-editor__text:hover {
+  background: #f5f7fa;
+}
+
+.field-title-editor__text.is-placeholder {
+  color: #b8c0cc;
+  font-weight: 400;
+}
+
+.field-title-editor__text.is-saved {
+  background: #ecfdf3;
+  color: #23a36d;
+  box-shadow: inset 0 0 0 1px #b7ebd1;
+}
+
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: move;
+  color: #409eff;
+  background: #ecf5ff;
+  border: 1px solid #d9ecff;
+}
+
+.field-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.field-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field-editor__row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.field-editor__item {
+  min-width: 220px;
+  flex: 1;
+}
+
+.field-editor__item.is-wide {
+  flex: 2;
+}
+
+.field-editor__item.is-full {
+  flex: 1 1 100%;
+}
+
+.field-editor__label {
+  margin-bottom: 8px;
+  color: #606266;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field-ability-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 2px 0 4px;
+}
+
+.field-select-box {
+  padding: 10px 12px;
+  border: 1px dashed #dcdfe6;
+  border-radius: 6px;
+  background: #fafbfd;
+}
+
+.field-select-box__title {
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #606266;
+}
+
+.field-select-empty {
+  padding: 12px 14px;
+  border: 1px dashed #d9ecff;
+  border-radius: 6px;
+  color: #409eff;
+  background: #f8fbff;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.field-select-empty:hover {
+  background: #ecf5ff;
+  border-color: #409eff;
 }
 
 .field-engine-tip {

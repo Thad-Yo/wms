@@ -5,7 +5,7 @@
 			<view class="t-b">
 				您好，
 				<br />
-				欢迎使用，飞修仓储
+				欢迎使用，骨料云溯源
 			</view>
 		</view>
 		<view class="login-view" style="">
@@ -22,15 +22,6 @@
 					<button @tap="login()">登 录</button>
 					<!-- <view class="reg" @tap="reg()">注 册</view> -->
 				</form>
-				<view class="t-f"><text>—————— 第三方账号登录 ——————</text></view>
-				<view class="t-e cl">
-					<view class="t-g" @tap="wxLogin()">
-						<image src="https://zhoukaiwen.com/img/loginImg/wx.png"></image>
-					</view>
-					<view class="t-g" @tap="zfbLogin()">
-						<image src="https://zhoukaiwen.com/img/loginImg/qq.png"></image>
-					</view>
-				</view>
 			</view>
 		</view>
 	</view>
@@ -119,21 +110,6 @@
 						uni.hideLoading();
 						this.mes(res.msg)
 					}
-				});
-
-			},
-			//等三方微信登录
-			wxLogin() {
-				uni.showToast({
-					title: '暂未开放',
-					icon: 'none'
-				});
-			},
-			//第三方支付宝登录
-			zfbLogin() {
-				uni.showToast({
-					title: '暂未开放',
-					icon: 'none'
 				});
 			}
 		}
@@ -229,34 +205,6 @@
 		text-align: center;
 		color: #999;
 		margin: 80rpx 0;
-	}
-
-	.t-login .t-e {
-		text-align: center;
-		width: 250rpx;
-		margin: 80rpx auto 0;
-	}
-
-	.t-login .t-g {
-		float: left;
-		width: 50%;
-	}
-
-	.t-login .t-e image {
-		width: 50rpx;
-		height: 50rpx;
-	}
-
-	.t-login .t-f {
-		text-align: center;
-		margin: 150rpx 0 0 0;
-		color: #666;
-	}
-
-	.t-login .t-f text {
-		margin-left: 20rpx;
-		color: #aaaaaa;
-		font-size: 27rpx;
 	}
 
 	.t-login .uni-input-placeholder {

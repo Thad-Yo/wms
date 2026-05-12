@@ -7,7 +7,7 @@
 			<view class="" style="width: 100%;height: 100%;position: relative; padding: 12px 12px 0 12px;">
 				<view class="flex text-white align-center" style="margin-top: 90px;margin-left: 10px;">
 					<view class="avator">
-						<img :src="avatar">
+						<image :src="avatar" mode="aspectFill"></image>
 					</view>
 					<view class="margin-left-sm">
 						<view class="text-xl text-bold">
@@ -154,7 +154,7 @@
 		border-radius: 50%;
 		overflow: hidden;
 
-		img {
+		image {
 			width: 100%;
 			height: 100%;
 		}
@@ -198,7 +198,7 @@
 				overflow: hidden;
 				box-shadow: 0 5rpx 20rpx 0rpx rgba(0, 0, 150, 0.2);
 
-				img {
+				image {
 					width: 100%;
 					height: 100%;
 				}

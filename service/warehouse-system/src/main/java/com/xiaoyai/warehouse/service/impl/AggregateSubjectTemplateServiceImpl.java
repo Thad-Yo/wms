@@ -54,10 +54,25 @@ public class AggregateSubjectTemplateServiceImpl implements IAggregateSubjectTem
     }
 
     @Override
+    public String previewNextSubjectCode() {
+        String prefix = "TPL-" + DateUtils.parseDateToStr("yyyyMMdd", DateUtils.getNowDate());
+        int suffix = 1;
+        while (aggregateSubjectTemplateMapper.selectOne(Wrappers.<AggregateSubjectTemplate>lambdaQuery()
+                .eq(AggregateSubjectTemplate::getSubjectCode, prefix + String.format("%02d", suffix))
+                .eq(AggregateSubjectTemplate::getDelFlag, "0")) != null) {
+            suffix++;
+        }
+        return prefix + String.format("%02d", suffix);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertAggregateSubjectTemplate(AggregateSubjectTemplateDto templateDto) {
         validateTemplate(templateDto, null);
         normalizeUseFlag(templateDto);
+        if (StringUtils.isBlank(templateDto.getSubjectCode())) {
+            templateDto.setSubjectCode(previewNextSubjectCode());
+        }
         templateDto.setCreateTime(DateUtils.getNowDate());
         if (shouldActivate(templateDto)) {
             disableAllTemplates();
@@ -76,6 +91,7 @@ public class AggregateSubjectTemplateServiceImpl implements IAggregateSubjectTem
         }
         validateTemplate(templateDto, templateDto.getTemplateId());
         normalizeUseFlag(templateDto);
+        templateDto.setSubjectCode(exists.getSubjectCode());
         templateDto.setUpdateTime(DateUtils.getNowDate());
         if (shouldActivate(templateDto)) {
             disableAllTemplates();
@@ -174,18 +190,8 @@ public class AggregateSubjectTemplateServiceImpl implements IAggregateSubjectTem
     }
 
     private void validateTemplate(AggregateSubjectTemplateDto templateDto, Long currentId) {
-        if (StringUtils.isBlank(templateDto.getSubjectCode())) {
-            throw new ServiceException("模板编码不能为空");
-        }
         if (StringUtils.isBlank(templateDto.getSubjectName())) {
             throw new ServiceException("模板名称不能为空");
-        }
-        AggregateSubjectTemplate codeExists = aggregateSubjectTemplateMapper.selectOne(Wrappers.<AggregateSubjectTemplate>lambdaQuery()
-                .eq(AggregateSubjectTemplate::getSubjectCode, templateDto.getSubjectCode())
-                .eq(AggregateSubjectTemplate::getDelFlag, "0")
-                .ne(currentId != null, AggregateSubjectTemplate::getTemplateId, currentId));
-        if (codeExists != null) {
-            throw new ServiceException("模板编码已存在");
         }
         List<AggregateSubjectField> fieldList = templateDto.getFieldList();
         if (fieldList == null || fieldList.isEmpty()) {

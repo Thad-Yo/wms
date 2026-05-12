@@ -10,6 +10,8 @@ public interface IAggregateSubjectTemplateService {
 
     AggregateSubjectTemplateDto selectAggregateSubjectTemplateById(Long templateId);
 
+    String previewNextSubjectCode();
+
     List<AggregateSubjectTemplate> selectEnabledTemplateOptions();
 
     int insertAggregateSubjectTemplate(AggregateSubjectTemplateDto templateDto);

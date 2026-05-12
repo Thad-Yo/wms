@@ -48,6 +48,12 @@ public class AggregateSubjectTemplateController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('warehouse:aggregate:subjectTemplate:add')")
+    @GetMapping("/nextCode")
+    public AjaxResult nextCode() {
+        return AjaxResult.success(aggregateSubjectTemplateService.previewNextSubjectCode());
+    }
+
+    @PreAuthorize("@ss.hasPermi('warehouse:aggregate:subjectTemplate:add')")
     @Log(title = "骨料模板管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody AggregateSubjectTemplateDto templateDto) {

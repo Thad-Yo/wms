@@ -15,6 +15,13 @@ export function getAggregateSubjectTemplate(templateId) {
   })
 }
 
+export function getNextAggregateSubjectTemplateCode() {
+  return request({
+    url: '/warehouse/aggregate/subjectTemplate/nextCode',
+    method: 'get'
+  })
+}
+
 export function addAggregateSubjectTemplate(data) {
   return request({
     url: '/warehouse/aggregate/subjectTemplate',

@@ -59,6 +59,7 @@
 				statusBarHeight: 44,
 				mode: 'scanCode',
 				scanFunctionIsUseable: true,
+				audioContext: null,
 				goodList: [],
 				noScanList: [],
 				successNum: 0,
@@ -90,6 +91,9 @@
 			this.statusBarHeight = uni.getSystemInfoSync().statusBarHeight + 10
 			this.permission()
 		},
+		onUnload() {
+			this.destroyAudio()
+		},
 		methods: {
 			permission() {
 				getPermission({
@@ -119,6 +123,13 @@
 						this.scanFunctionIsUseable = true;
 					}, 1500)
 				}
+			},
+			error(err) {
+				console.log('camera error', err)
+				uni.showToast({
+					title: '摄像头初始化失败',
+					icon: 'none'
+				})
 			},
 			//入库扫码时 改变物品状态
 			changeInGoodsList(code) {
@@ -177,15 +188,18 @@
 			},
 			// 扫码提示音
 			playMusic() {
-				const innerAudioContext = wx.createInnerAudioContext()
-				innerAudioContext.autoplay = true
-				innerAudioContext.src = '/static/scan-video.mp3'
-				innerAudioContext.onPlay(() => {
-					this.redirectTo()
-				})
-				innerAudioContext.onError(() => {
-					this.redirectTo()
-				})
+				if (!this.audioContext) {
+					this.audioContext = uni.createInnerAudioContext()
+				}
+				this.audioContext.autoplay = true
+				this.audioContext.src = '/static/scan-video.mp3'
+				this.audioContext.play()
+			},
+			destroyAudio() {
+				if (this.audioContext) {
+					this.audioContext.destroy()
+					this.audioContext = null
+				}
 			},
 
 			back() {

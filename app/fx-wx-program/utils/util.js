@@ -60,9 +60,18 @@ const debounce = (fn,delay = 1000,promptly) => {
  * @param {Function} params.cancel  取消继续授权回调函数
  */
 function getPermission(params) {
+	// #ifdef APP-PLUS
+	params.success && params.success()
+	return
+	// #endif
 
 	const _permission = `scope.${params.permission}`
 	const _tipsContent = `您拒绝了${params.permissionName}权限，将导致部分功能不能正常使用，去设置权限？`
+
+	if (typeof uni.getSetting !== 'function') {
+		params.success && params.success()
+		return
+	}
 
 	uni.getSetting({
 		success(res) {
@@ -74,7 +83,7 @@ function getPermission(params) {
 						title: '提示',
 						content: _tipsContent,
 						success: (res)=> {
-							if(res.confirm) {
+							if(res.confirm && typeof uni.openSetting === 'function') {
 								uni.openSetting()
 							}else {
 								if(params.cancel) {
@@ -90,6 +99,10 @@ function getPermission(params) {
 				}
 			} else {
 				// 属性不存在，需要授权
+				if (typeof uni.authorize !== 'function') {
+					params.success && params.success()
+					return
+				}
 				uni.authorize({
 					scope: _permission,
 					success() {
@@ -101,7 +114,7 @@ function getPermission(params) {
 							title: '提示',
 							content: _tipsContent,
 							success: (res)=> {
-								if(res.confirm) {
+								if(res.confirm && typeof uni.openSetting === 'function') {
 									uni.openSetting()
 								}else {
 									if(params.cancel) {
@@ -115,6 +128,9 @@ function getPermission(params) {
 					}
 				})
 			}
+		},
+		fail() {
+			params.success && params.success()
 		}
 	})
 }

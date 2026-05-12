@@ -52,9 +52,17 @@
 		},
 		methods: {
 			BackPage() {
-				if (getCurrentPages().length < 2 && 'undefined' !== typeof __wxConfig) {
-					let url = '/' + __wxConfig.pages[0]
-					return uni.redirectTo({url})
+				const pages = getCurrentPages();
+				if (pages.length < 2) {
+					// #ifdef MP-WEIXIN
+					if ('undefined' !== typeof __wxConfig) {
+						let url = '/' + __wxConfig.pages[0]
+						return uni.redirectTo({url})
+					}
+					// #endif
+					return uni.reLaunch({
+						url: '/pages/index/index'
+					})
 				}
 				uni.navigateBack({
 					delta: 1

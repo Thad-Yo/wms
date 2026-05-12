@@ -40,7 +40,7 @@
 
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button v-hasPermi="['warehouse:aggregate:rfid:edit']" type="primary" plain icon="el-icon-download" size="mini" @click="handleExportTemplate">导出绑定模板</el-button>
+            <el-button v-hasPermi="['warehouse:aggregate:rfid:edit']" type="primary" plain icon="el-icon-download" size="mini" @click="handleExportTemplate">导出待绑定清单</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button v-hasPermi="['warehouse:aggregate:rfid:edit']" type="warning" plain icon="el-icon-upload2" size="mini" @click="handleImport">导入绑定</el-button>
@@ -188,8 +188,8 @@
         <i class="el-icon-upload" />
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div slot="tip" class="el-upload__tip text-center">
-          <span>仅允许导入xls、xlsx格式文件。</span>
-          <el-link type="primary" :underline="false" style="font-size: 12px; vertical-align: baseline" @click="handleExportTemplate">下载模板</el-link>
+          <span>先导出待绑定清单，在 Excel 中按行填写货物编号及模板字段后再导入。</span>
+          <el-link type="primary" :underline="false" style="font-size: 12px; vertical-align: baseline" @click="handleExportTemplate">下载清单</el-link>
         </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
@@ -427,7 +427,13 @@ export default {
         this.$modal.msgWarning('请先在模板管理中启用一个骨料模板')
         return
       }
-      this.download('/warehouse/aggregate/rfid/exportBindTemplate', {}, `rfid_bind_template_${new Date().getTime()}.xlsx`)
+      const params = {
+        batchNo: this.queryParams.batchNo,
+        rfidCode: this.queryParams.rfidCode,
+        materialName: this.queryParams.materialName,
+        useStatus: this.queryParams.useStatus || 'UNUSED'
+      }
+      this.download('/warehouse/aggregate/rfid/exportBindTemplate', params, `rfid_bind_template_${new Date().getTime()}.xlsx`)
     },
     handleImport() {
       if (!this.currentTemplate || !this.currentTemplate.templateId) {
@@ -435,7 +441,7 @@ export default {
         return
       }
       this.upload.open = true
-      this.upload.title = '导入绑定'
+      this.upload.title = 'Excel批量绑定'
     },
     handleFileUploadProgress() {
       this.upload.isUploading = true
@@ -444,10 +450,13 @@ export default {
       this.upload.open = false
       this.upload.isUploading = false
       this.$refs.upload.clearFiles()
-      this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + '</div>', '导入结果', { dangerouslyUseHTMLString: true })
+      this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + '</div>', '批量绑定结果', { dangerouslyUseHTMLString: true })
       this.getList()
     },
     submitFileForm() {
+      if (this.upload.isUploading) {
+        return
+      }
       this.$refs.upload.submit()
     },
     openEvent(row) {
