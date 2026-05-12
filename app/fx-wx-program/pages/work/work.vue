@@ -121,6 +121,13 @@
 						permissions: false,
 						permissionsKey: 'progress:index'
 					},
+					{
+						icon: "/static/workspace/inventory.png",
+						title: '骨料溯源',
+						path: "/pages/workspace/aggregate-trace/index",
+						permissions: true,
+						permissionsKey: 'warehouse:aggregate:lifecycle:query'
+					},
 				],
 				reportList: [{
 					icon: "/static/workspace/inventory.png",
